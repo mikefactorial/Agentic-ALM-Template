@@ -1,35 +1,26 @@
 # Setup Guide — New Client Repository
 
 This repository was created from the [Agentic-ALM-Template](https://github.com/mikefactorial/Agentic-ALM-Template).
-Follow the steps below to configure it for your project.
+
+## Quick Start
+
+Run the setup script, install the plugin, then let the agent walk you through the rest:
+
+```powershell
+.\Initialize-Repo.ps1
+```
+
+This initializes the `.platform` submodule and prints plugin install instructions. After installing the plugin, say to the agent:
+
+> "Set up this repo — it was just created from the Agentic-ALM-Template."
+
+The `setup-client-repo` skill handles the rest interactively.
 
 ---
 
-## Step 1: Replace Placeholders
+## Manual Steps Reference
 
-Search for `{{...}}` placeholders throughout the repo and replace them:
-
-| Placeholder | Description | Example |
-|-------------|-------------|---------|
-| `{{CLIENT_NAME}}` | Human-readable client/product name | `Acme Corp Platform` |
-| `{{PRODUCT_DESCRIPTION}}` | One-line product description | `Power Platform solution for Acme Corp` |
-| `{{PUBLISHER}}` | Dataverse publisher name | `AcmeCorp` |
-| `{{SOLUTION_NAME}}` | Solution name (PascalCase) | `AcmePlatform` |
-| `{{SOLUTION_PREFIX}}` | Solution prefix (lowercase, 3–5 chars) | `acm` |
-| `{{SOLUTION_ROLE}}` | Role description | `Core platform solution` |
-| `{{GITHUB_ORG}}` | GitHub organization | `AcmeCorp` |
-| `{{REPO_NAME}}` | GitHub repo name | `AcmeCorp-Platform` |
-| `{{ENV_PREFIX}}` | Environment name prefix | `acme` |
-| `{{TENANT_SLUG}}` | Short tenant identifier used in env URLs | `acme` |
-| `{{PACKAGE_TAG}}` | Release tag suffix appended after the version number | `AcmePlatform` |
-
-Files to update:
-- `.github/copilot-instructions.md`
-- `.github/workflows/*.yml` (replace `{{GITHUB_ORG}}` placeholder in `uses:` lines)
-- `deployments/settings/environment-config.json`
-- `src/README.md`
-
-> The `deployments/package/` folder uses no client-specific placeholders and requires no renaming.
+If you prefer to configure without the agent, the sections below cover each step.
 
 ---
 
@@ -121,33 +112,28 @@ This repo has one submodule:
 
 | Submodule | Repo | Purpose |
 |-----------|------|---------|
-| `.platform` | `Agentic-ALM-Workflows` | PowerShell scripts for skills and CI |
+| `.platform` | `Agentic-ALM-Workflows` | PowerShell scripts, plugin skills, and CI |
 
-Initialize it with the included setup script:
+Initialize with:
+
+```powershell
+.\Initialize-Repo.ps1
+```
+
+Or just the submodule step:
 
 ```powershell
 .\Initialize-Submodules.ps1
 ```
 
-After init, `.platform/.github/workflows/scripts/` will contain all scripts used by local skills and GitHub Actions callable workflows.
+After init, `.platform/.github/workflows/scripts/` contains all scripts used locally and by GitHub Actions.
 
-To update scripts to the latest version:
+## Keeping Platform Assets Updated
+
+Run the same script any time to update:
+
 ```powershell
-git submodule update --remote .platform
-# Or via GitHub Actions: sync-platform-assets.yml → scripts
+.\Initialize-Repo.ps1
 ```
 
-## Step 9: Keeping Platform Assets Updated
-
-Use the `sync-platform-assets.yml` workflow to pull the latest skills, instructions,
-or both from `Agentic-ALM-Workflows`:
-
-```
-Workflow: sync-platform-assets.yml
-Inputs:
-  asset_group: all | alm-skills | instructions
-  platform_ref: main (or a specific tag)
-  create_pr: true
-```
-
-This opens a PR with the updated assets for review before merging.
+This updates `.platform` to the latest `Agentic-ALM-Workflows` main, then reminds you to refresh the plugin. Idempotent — safe to re-run.

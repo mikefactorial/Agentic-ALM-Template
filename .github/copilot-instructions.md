@@ -36,6 +36,24 @@ All skill script references use `.platform/.github/workflows/scripts/`. If `.pla
 
 ---
 
+## Agent Skills (Plugin)
+
+ALM skills (start-feature, scaffold-plugin, deploy-solution, etc.) ship as an installable plugin from `Agentic-ALM-Workflows`. Skills cover the full inner and outer loop.
+
+**Install for GitHub Copilot:**
+```
+/plugin install github:mikefactorial/Agentic-ALM-Workflows
+```
+
+**Install for Claude Code (once `.platform` is initialized):**
+```bash
+claude --plugin-dir .platform/.github/plugins/power-platform-alm
+```
+
+After installing, describe any ALM task in plain English — the `alm-overview` router skill picks the right specialist automatically.
+
+---
+
 ## Branching Strategy
 
 ```

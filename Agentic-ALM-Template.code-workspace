@@ -5,6 +5,9 @@
 		},
 		{
 			"path": "../Agentic-ALM-Workflows"
+		},
+		{
+			"path": "../Dataverse-skills"
 		}
 	],
 	"settings": {}

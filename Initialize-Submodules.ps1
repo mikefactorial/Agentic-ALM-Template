@@ -1,10 +1,11 @@
 <#
 .SYNOPSIS
-    Initializes all git submodules with the correct sparse-checkout configuration.
+    Low-level submodule init. Prefer .\Initialize-Repo.ps1 for normal use.
 
 .DESCRIPTION
-    Run this once after cloning the repository. Handles:
-      - .platform  (Agentic-ALM-Workflows) — full checkout, partial clone filter
+    Initializes all git submodules with the correct sparse-checkout configuration.
+    Use Initialize-Repo.ps1 instead — it handles init, update, and plugin instructions.
+    Use this script only when you want submodule init without the full setup flow.
 
 .EXAMPLE
     .\Initialize-Submodules.ps1
