@@ -44,11 +44,17 @@ on:
         required: false
         type: boolean
         default: true
+      sync_create_pr:
+        description: 'Open a pull request for the sync instead of committing directly to sync_branch_name'
+        required: false
+        type: boolean
+        default: true
 
 permissions:
   contents: write
   id-token: write
   actions: read
+  pull-requests: write
 
 jobs:
   transport:
@@ -61,5 +67,6 @@ jobs:
       sync_target_solution: ${{ inputs.sync_target_solution }}
       sync_commit_message: ${{ inputs.sync_commit_message }}
       sync_branch_name: ${{ inputs.sync_branch_name }}
+      sync_create_pr: ${{ inputs.sync_create_pr }}
       publish_customizations: ${{ inputs.publish_customizations }}
     secrets: inherit

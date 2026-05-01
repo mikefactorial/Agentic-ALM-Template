@@ -1,6 +1,6 @@
 name: Transport Solution
 
-# Callable workflow — transport feature solution components from preview to dev.
+# Callable workflow — transport feature solution components from dev to integration.
 # Phase 1 (export-solution): exports from source env and uploads ZIP artifact.
 # Phase 2 (import-and-copy): downloads ZIP, imports to target, copies components.
 # Phase 3 (sync-solution): optionally syncs the target solution back to the repo.

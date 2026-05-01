@@ -54,8 +54,7 @@ Edit `deployments/settings/environment-config.json` to match your actual:
 
 | Secret | Description |
 |--------|-------------|
-| `APP_ID` | GitHub App ID (used for cross-repo checkout) |
-| `APP_PRIVATE_KEY` | GitHub App private key |
+| *(none required)* | Secrets are set per GitHub Environment — see below |
 
 ### Environment Variables (per GitHub Environment)
 
@@ -90,15 +89,7 @@ Test OIDC auth using the `test-oidc-auth.yml` workflow.
 
 ---
 
-## Step 6: Set Up GitHub App for Cross-Repo Checkout
-
-The workflows use a GitHub App token (via `actions/create-github-app-token@v1`) to
-check out `Agentic-ALM-Workflows`. The App needs:
-- `contents: read` on `Agentic-ALM-Workflows`
-
-Install the App on both this repo and `Agentic-ALM-Workflows`.
-
-## Step 7: Branch Protection
+## Step 6: Branch Protection
 
 Configure branch protection rules in GitHub:
 - `main`: require PR from `develop` or `hotfix/*` only (enforced by `check-source-branch.yml`)

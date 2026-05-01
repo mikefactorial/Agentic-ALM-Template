@@ -1,7 +1,7 @@
 name: Sync, Build, and Deploy Solution
 
-# Callable workflow — sync from preview env, build, then deploy to target environments.
-# Required for inner loop: always sync before deploying to preview-test.
+# Callable workflow — sync from dev env, build, then deploy to target environments.
+# Required for inner loop: always sync before deploying to dev-test.
 
 on:
   workflow_call:

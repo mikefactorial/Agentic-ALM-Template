@@ -28,10 +28,16 @@ on:
         required: false
         type: boolean
         default: true
+      create_pr:
+        description: 'Open a pull request instead of committing directly to branch_name'
+        required: false
+        type: boolean
+        default: false
 
 permissions:
   contents: write
   id-token: write
+  pull-requests: write
 
 jobs:
   sync-solution:
@@ -42,4 +48,5 @@ jobs:
       commit_message: ${{ inputs.commit_message }}
       branch_name: ${{ inputs.branch_name }}
       publish_customizations: ${{ inputs.publish_customizations }}
+      create_pr: ${{ inputs.create_pr }}
     secrets: inherit

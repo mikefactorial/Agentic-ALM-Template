@@ -42,10 +42,16 @@ on:
         required: false
         type: boolean
         default: false
+      create_pr:
+        description: 'Open a pull request for the sync instead of committing directly to branch_name'
+        required: false
+        type: boolean
+        default: false
 
 permissions:
   contents: write
   id-token: write
+  pull-requests: write
 
 jobs:
   sync-build-deploy:
@@ -59,4 +65,5 @@ jobs:
       commit_message: ${{ inputs.commit_message }}
       continue_on_error: ${{ inputs.continue_on_error }}
       use_upgrade: ${{ inputs.use_upgrade }}
+      create_pr: ${{ inputs.create_pr }}
     secrets: inherit
