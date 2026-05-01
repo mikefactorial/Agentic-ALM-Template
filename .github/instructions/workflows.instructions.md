@@ -12,10 +12,10 @@ applyTo: ".github/workflows/**"
 
 | Workflow | Trigger | Purpose |
 |----------|---------|---------|
-| `sync-solution.yml` | Manual dispatch | Sync solution from dev env → repo (commits to branch) |
-| `sync-build-deploy-solution.yml` | Manual dispatch | Sync from preview → build → deploy (always syncs first) |
+| `sync-solution.yml` | Manual dispatch | Sync solution from integration env → repo (commits to branch) |
+| `sync-build-deploy-solution.yml` | Manual dispatch | Sync from dev → build → deploy (always syncs first) |
 | `build-deploy-solution.yml` | Manual dispatch | Build from current branch → deploy (no sync, for feature branches) |
-| `transport-solution.yml` | Manual dispatch | Transport components: preview → dev (export → import → copy) |
+| `transport-solution.yml` | Manual dispatch | Transport components: dev → integration (export → import → copy) |
 
 ### Outer Loop (Build, Release, Deploy)
 
@@ -38,7 +38,7 @@ applyTo: ".github/workflows/**"
 
 | Input | Type | Required | Default | Choices |
 |-------|------|----------|---------|---------|
-| `environment` | choice | yes | — | Read from `innerLoopEnvironments[].slug` in `environment-config.json` (dev envs) |
+| `environment` | choice | yes | — | Read from `innerLoopEnvironments[].slug` in `environment-config.json` (integration envs) |
 | `solution_name` | string | yes | — | — |
 | `commit_message` | string | yes | — | — |
 | `branch_name` | string | no | `develop` | — |
@@ -49,17 +49,17 @@ applyTo: ".github/workflows/**"
 | Input | Type | Required | Default | Choices |
 |-------|------|----------|---------|---------|
 | `solution_name` | string | yes | — | — |
-| `target_environments` | string | yes | — | Comma-separated slug(s) from `environments[]` in `environment-config.json` (e.g., `{envPrefix}-preview-test`) |
+| `target_environments` | string | yes | — | Comma-separated slug(s) from `environments[]` in `environment-config.json` (e.g., `{envPrefix}-dev-test`) |
 | `continue_on_error` | boolean | no | false | — |
 | `use_upgrade` | boolean | no | false | — |
 
-Runs on the caller's current branch — designed for feature branch → preview-test deployments without sync.
+Runs on the caller's current branch — designed for feature branch → dev-test deployments without sync.
 
 ### sync-build-deploy-solution.yml
 
 | Input | Type | Required | Default | Choices |
 |-------|------|----------|---------|---------|
-| `source_environment` | choice | yes | — | Read from `innerLoopEnvironments[].slug` in `environment-config.json` (preview envs) |
+| `source_environment` | choice | yes | — | Read from `innerLoopEnvironments[].slug` in `environment-config.json` (dev envs) |
 | `solution_name` | string | yes | — | — |
 | `target_environments` | string | yes | — | Comma-separated |
 | `publish_customizations` | boolean | no | true | — |
@@ -74,8 +74,8 @@ Always syncs first (job dependency chain: sync → build → deploy).
 
 | Input | Type | Required | Default | Choices |
 |-------|------|----------|---------|---------|
-| `source_environment` | choice | yes | — | Read from `innerLoopEnvironments[].slug` in `environment-config.json` (preview envs) |
-| `target_environment` | choice | yes | — | Read from `innerLoopEnvironments[].slug` in `environment-config.json` (dev envs) |
+| `source_environment` | choice | yes | — | Read from `innerLoopEnvironments[].slug` in `environment-config.json` (dev envs) |
+| `target_environment` | choice | yes | — | Read from `innerLoopEnvironments[].slug` in `environment-config.json` (integration envs) |
 | `source_solution_name` | string | yes | — | — |
 | `target_solution_name` | string | yes | — | — |
 | `sync_target_solution` | boolean | no | false (dispatch) / true (call) | — |
@@ -109,7 +109,7 @@ Uses `pac package deploy` (outer loop). Resolves solutions from `environment-con
 
 | Mechanism | Script | PAC Command | Used By | Use Case |
 |-----------|--------|-------------|---------|----------|
-| Solution import | `Deploy-Solutions.ps1` | `pac solution import` | build-deploy-solution, sync-build-deploy-solution | Inner loop: feature → preview-test |
+| Solution import | `Deploy-Solutions.ps1` | `pac solution import` | build-deploy-solution, sync-build-deploy-solution | Inner loop: feature → dev-test |
 | Package deploy | `Deploy-Package.ps1` | `pac package deploy` | deploy-package | Outer loop: release → test/prod |
 
 ## Script Reference

@@ -44,10 +44,9 @@ Scripts and reusable jobs live in Agentic-ALM-Workflows.
 | `sync-solution.yml` | Manual | Export solution from Dataverse to repo |
 | `build-deploy-solution.yml` | Manual | Build → Deploy (inner loop, no sync) |
 | `sync-build-deploy-solution.yml` | Manual | Sync → Build → Deploy |
-| `transport-solution.yml` | Manual | Transport preview → dev |
+| `transport-solution.yml` | Manual | Transport dev → integration |
 | `deploy-package.yml` | Manual | Deploy release package to an environment |
 | `deploy-solutions.yml` | Manual / after release | Deploy individual solutions from a release |
 | `create-release-package.yml` | Push to `main` / manual | Build release packages + create GitHub Release |
 | `pr-validation.yml` | Pull request | Build and validate changed components |
 | `check-source-branch.yml` | Pull request | Enforce branch policies |
-| `sync-platform-assets.yml` | Manual | Sync skills/instructions from PlatformTemplate |

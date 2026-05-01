@@ -74,31 +74,31 @@ Replaces the Plugin Registration Tool (PRT) for pushing binaries and registering
 ```powershell
 # Push plugin package + register all steps from solution XML
 .github/workflows/scripts/Register-Plugin.ps1 `
-    -EnvironmentUrl "{previewEnvUrl}" `
+    -EnvironmentUrl "{devEnvUrl}" `
     -SolutionPath "src/solutions/{solutionPrefix}_{solutionName}" `
     -PluginName "{solutionPrefix}_{publisher}.Plugins.{solutionName}.{Name}" `
     -RegisterSteps -SolutionName "my_feature"
 
 # Push only (no step registration)
 .github/workflows/scripts/Register-Plugin.ps1 `
-    -EnvironmentUrl "{previewEnvUrl}" `
+    -EnvironmentUrl "{devEnvUrl}" `
     -SolutionPath "src/solutions/{solutionPrefix}_{solutionName}" `
     -PluginName "{solutionPrefix}_{publisher}.Plugins.{solutionName}.{Name}"
 
 # Register a single new step
 .github/workflows/scripts/Register-Plugin.ps1 `
-    -EnvironmentUrl "{previewEnvUrl}" `
+    -EnvironmentUrl "{devEnvUrl}" `
     -PluginType "{publisher}.Plugins.{solutionName}.{Name}.{PluginClass}" `
     -Message "Create" -PrimaryEntity "{solutionPrefix}_sample" `
     -Stage 40 -StepMode 0 -SolutionName "my_feature"
 
 # Register custom APIs from solution XML
 .github/workflows/scripts/Register-Plugin.ps1 `
-    -EnvironmentUrl "{previewEnvUrl}" `
+    -EnvironmentUrl "{devEnvUrl}" `
     -CustomApiPath "src/solutions/{solutionPrefix}_{solutionName}/src/customapis/{solutionPrefix}_MyCustomApi"
 ```
 
-> Derive `solutionPrefix`, `solutionName`, and `publisher` from `environment-config.json`. Derive `previewEnvUrl` from `solutionAreas[x].previewEnv` → `innerLoopEnvironments[].url`.
+> Derive `solutionPrefix`, `solutionName`, and `publisher` from `environment-config.json`. Derive `devEnvUrl` from `solutionAreas[x].devEnv` → `innerLoopEnvironments[].url`.
 
 Parameters: `-EnvironmentUrl`, `-SolutionPath`, `-PluginName`, `-PluginFile`, `-RegisterSteps`, `-SkipPush`, `-PluginType`, `-Message`, `-PrimaryEntity`, `-Stage`, `-StepMode`, `-Rank`, `-FilteringAttributes`, `-AsyncAutoDelete`, `-PreImageAttributes`, `-PostImageAttributes`, `-CustomApiPath`, `-SolutionName`, `-TenantId`, `-ClientId`
 

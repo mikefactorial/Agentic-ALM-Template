@@ -81,11 +81,11 @@ Sync exports a solution from a Dataverse environment and unpacks it to the repo:
 # Via script (local)
 .github/workflows/scripts/Sync-Solution.ps1 `
   -solutionName "{solutionPrefix}_{solutionName}" `
-  -environmentUrl "{devEnvUrl}" `
+  -environmentUrl "{integrationEnvUrl}" `
   -skipGitCommit
 ```
 
-> Derive `solutionName`, `solutionPrefix` from `solutionAreas[]` and `devEnvUrl` from `innerLoopEnvironments[]` in `environment-config.json`.
+> Derive `solutionName`, `solutionPrefix` from `solutionAreas[]` and `integrationEnvUrl` from `innerLoopEnvironments[]` in `environment-config.json`.
 
 Sync triggers these hook stages:
 1. `Pre-Unpack` / `Post-Unpack` — Before/after solution XML unpacking
@@ -97,7 +97,7 @@ Sync triggers these hook stages:
 ```powershell
 .github/workflows/scripts/Build-Solutions.ps1 `
   -solutionList "{solutionPrefix}_{solutionName}" `
-  -targetEnvironmentList "{previewTestSlug}" `
+  -targetEnvironmentList "{devTestSlug}" `
   -artifactsPath ./out
 ```
 

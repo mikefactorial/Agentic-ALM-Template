@@ -43,7 +43,7 @@ That's it — no renaming required. The project uses a generic `PlatformPackage`
 
 Edit `deployments/settings/environment-config.json` to match your actual:
 - Solution names and prefixes
-- Environment slugs and URLs (dev, test, prod)
+- Environment slugs and URLs (integration, test, prod)
 - Package groups (which solutions deploy together)
 
 ---
@@ -73,7 +73,7 @@ Each deployment target environment needs these variables set in **GitHub Environ
 | Variable | Description | Example |
 |----------|-------------|---------|
 | `DEPLOYMENT_ENVIRONMENTS` | Comma-separated default deploy targets for `workflow_run` trigger | `acme-test` |
-| `PR_VALIDATION_DEV_ENV` | Dev environment slug for PR validation builds | `acme-dev` |
+| `PR_VALIDATION_INTEGRATION_ENV` | Integration environment slug for PR validation builds | `acme-integration` |
 
 ---
 

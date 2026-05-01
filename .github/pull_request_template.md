@@ -19,7 +19,7 @@
 
 <!-- Document what was tested and in which environment -->
 
-- **Environment tested in:** <!-- e.g., {envPrefix}-preview-test -->
+- **Environment tested in:** <!-- e.g., {envPrefix}-dev-test -->
 - **Test scenarios:**
   1. <!-- Describe scenario and result -->
 

@@ -85,12 +85,12 @@ Use [Conventional Commits](https://www.conventionalcommits.org/) format:
 
 ```
 1. Branch from develop → AB####_Description
-2. Create feature solution in preview env → set as preferred solution
-3. Develop & iterate in preview
+2. Create feature solution in dev env → set as preferred solution
+3. Develop & iterate in dev
 4. Sync feature solution to feature branch
-5. Build + deploy feature solution to preview-test
-6. Test in preview-test environment
-7. After validation: transport feature solution from preview → dev
+5. Build + deploy feature solution to dev-test
+6. Test in dev-test environment
+7. After validation: transport feature solution from dev → integration
 8. Merge feature branch → develop (PR for code-first changes)
 ```
 
@@ -110,9 +110,9 @@ Use [Conventional Commits](https://www.conventionalcommits.org/) format:
 
 Read all environment slugs and URLs from `deployments/settings/environment-config.json`:
 
-- **Inner loop** (preview + dev per solution area): `innerLoopEnvironments[]`
-- **Deployment targets** (preview-test, test, prod): `environments[]`
-- **Per-solution-area mapping**: `solutionAreas[x].previewEnv` → preview slug; `solutionAreas[x].devEnv` → dev slug
+- **Inner loop** (dev + integration per solution area): `innerLoopEnvironments[]`
+- **Deployment targets** (dev-test, test, prod): `environments[]`
+- **Per-solution-area mapping**: `solutionAreas[x].devEnv` → dev slug; `solutionAreas[x].integrationEnv` → integration slug
 
 Resolve the URL for any slug by finding the matching entry in `innerLoopEnvironments[]` or `environments[]` and reading `.url`.
 
@@ -147,8 +147,8 @@ callable workflow. For local use, clone Agentic-ALM-Workflows and run scripts di
 ### Prerequisites
 
 ```powershell
-# Read the preview URL from innerLoopEnvironments[] in environment-config.json
-pac auth create --interactive --environment {previewEnvUrl}
+# Read the dev URL from innerLoopEnvironments[] in environment-config.json
+pac auth create --interactive --environment {devEnvUrl}
 pac auth list
 pac auth select --index <n>
 ```
@@ -166,4 +166,4 @@ pac auth select --index <n>
 7. **Package deploy** (outer loop) vs **solution import** (inner loop) — don't mix them up
 8. **Transport must go via GitHub Actions workflow** — branch protection prevents direct pushes
 9. **dotnet build for inner loop** — `Build-Solutions.ps1` is outer-loop/CI only
-10. **Always sync before deploying to preview-test** — never assume a feature is code-first only
+10. **Always sync before deploying to dev-test** — never assume a feature is code-first only

@@ -18,25 +18,25 @@
       "pluginsSln": "src/plugins/{{SOLUTION_PREFIX}}_{{SOLUTION_NAME}}/{{PUBLISHER}}.{{SOLUTION_NAME}}.Plugins.sln",
       "corePluginRef": null,
       "controlPreBuildPaths": [],
-      "previewEnv": "{{ENV_PREFIX}}-preview",
-      "devEnv": "{{ENV_PREFIX}}-dev"
+      "devEnv": "{{ENV_PREFIX}}-dev",
+      "integrationEnv": "{{ENV_PREFIX}}-integration"
     }
   ],
   "innerLoopEnvironments": [
-    { "slug": "{{ENV_PREFIX}}-preview", "url": "https://{{ENV_PREFIX}}-pre-{{TENANT_SLUG}}.crm.dynamics.com/" },
-    { "slug": "{{ENV_PREFIX}}-dev",     "url": "https://{{ENV_PREFIX}}-dev-{{TENANT_SLUG}}.crm.dynamics.com/" }
+    { "slug": "{{ENV_PREFIX}}-dev",         "url": "https://{{ENV_PREFIX}}-dev-{{TENANT_SLUG}}.crm.dynamics.com/" },
+    { "slug": "{{ENV_PREFIX}}-integration", "url": "https://{{ENV_PREFIX}}-int-{{TENANT_SLUG}}.crm.dynamics.com/" }
   ],
   "environments": [
-    { "slug": "{{ENV_PREFIX}}-preview-test", "url": "https://{{ENV_PREFIX}}-prt-{{TENANT_SLUG}}.crm.dynamics.com/" },
-    { "slug": "{{ENV_PREFIX}}-test",         "url": "https://{{ENV_PREFIX}}-tst-{{TENANT_SLUG}}.crm.dynamics.com/" },
-    { "slug": "{{ENV_PREFIX}}-prod",         "url": "https://{{ENV_PREFIX}}-prd-{{TENANT_SLUG}}.crm.dynamics.com/" }
+    { "slug": "{{ENV_PREFIX}}-dev-test", "url": "https://{{ENV_PREFIX}}-dvt-{{TENANT_SLUG}}.crm.dynamics.com/" },
+    { "slug": "{{ENV_PREFIX}}-test",     "url": "https://{{ENV_PREFIX}}-tst-{{TENANT_SLUG}}.crm.dynamics.com/" },
+    { "slug": "{{ENV_PREFIX}}-prod",     "url": "https://{{ENV_PREFIX}}-prd-{{TENANT_SLUG}}.crm.dynamics.com/" }
   ],
   "packageGroups": [
     {
       "name": "{{SOLUTION_NAME}}",
       "solutions": ["{{SOLUTION_PREFIX}}_{{SOLUTION_NAME}}"],
       "dataSolution": "{{SOLUTION_PREFIX}}_{{SOLUTION_NAME}}",
-      "environments": ["{{ENV_PREFIX}}-preview-test", "{{ENV_PREFIX}}-test", "{{ENV_PREFIX}}-prod"]
+      "environments": ["{{ENV_PREFIX}}-dev-test", "{{ENV_PREFIX}}-test", "{{ENV_PREFIX}}-prod"]
     }
   ]
 }
