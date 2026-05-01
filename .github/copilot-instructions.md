@@ -21,18 +21,12 @@ Refer to `solutionAreas[]` in `deployments/settings/environment-config.json` for
 
 PowerShell scripts used by skills and local development live in the `.platform` git submodule, which points to `{{GITHUB_ORG}}/Agentic-ALM-Workflows`. This is the same path used by callable workflows in CI.
 
-**One-time local setup:**
+**Initialize or update to latest:**
 ```powershell
-.\Initialize-Submodules.ps1
+.\Initialize-Repo.ps1
 ```
 
-**Update scripts to latest:**
-```powershell
-git submodule update --remote .platform
-# Or via GitHub Actions: sync-platform-assets.yml → scripts
-```
-
-All skill script references use `.platform/.github/workflows/scripts/`. If `.platform` is empty, run the init command above.
+All skill script references use `.platform/.github/workflows/scripts/`. If `.platform` is empty, run the command above.
 
 ---
 

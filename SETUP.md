@@ -120,12 +120,6 @@ Initialize with:
 .\Initialize-Repo.ps1
 ```
 
-Or just the submodule step:
-
-```powershell
-.\Initialize-Submodules.ps1
-```
-
 After init, `.platform/.github/workflows/scripts/` contains all scripts used locally and by GitHub Actions.
 
 ## Keeping Platform Assets Updated
