@@ -23,13 +23,13 @@
     }
   ],
   "innerLoopEnvironments": [
-    { "slug": "{{ENV_PREFIX}}-dev",         "url": "https://{{ENV_PREFIX}}-dev-{{TENANT_SLUG}}.crm.dynamics.com/" },
-    { "slug": "{{ENV_PREFIX}}-integration", "url": "https://{{ENV_PREFIX}}-int-{{TENANT_SLUG}}.crm.dynamics.com/" }
+    { "slug": "{{ENV_PREFIX}}-dev",         "url": "{{DEV_ENV_URL}}" },
+    { "slug": "{{ENV_PREFIX}}-integration", "url": "{{INTEGRATION_ENV_URL}}" }
   ],
   "environments": [
-    { "slug": "{{ENV_PREFIX}}-dev-test", "url": "https://{{ENV_PREFIX}}-dvt-{{TENANT_SLUG}}.crm.dynamics.com/" },
-    { "slug": "{{ENV_PREFIX}}-test",     "url": "https://{{ENV_PREFIX}}-tst-{{TENANT_SLUG}}.crm.dynamics.com/" },
-    { "slug": "{{ENV_PREFIX}}-prod",     "url": "https://{{ENV_PREFIX}}-prd-{{TENANT_SLUG}}.crm.dynamics.com/" }
+    { "slug": "{{ENV_PREFIX}}-dev-test", "url": "{{DEV_TEST_ENV_URL}}" },
+    { "slug": "{{ENV_PREFIX}}-test",     "url": "{{TEST_ENV_URL}}" },
+    { "slug": "{{ENV_PREFIX}}-prod",     "url": "{{PROD_ENV_URL}}" }
   ],
   "packageGroups": [
     {
