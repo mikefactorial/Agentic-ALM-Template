@@ -1,5 +1,58 @@
 # Platform — Agent Instructions
 
+## First-Time Setup (Bootstrap)
+
+**Check this first on every session start.** Read `deployments/settings/environment-config.json` and look for unreplaced `{{PLACEHOLDER}}` values.
+
+If placeholders are present, this repo has not been configured yet. Guide the user through the following bootstrap before doing anything else:
+
+### Step 1 — Initialize `.platform`
+
+Check whether `.platform/.github/workflows/scripts/` contains files:
+
+```powershell
+Test-Path ".platform/.github/workflows/scripts"
+```
+
+If `False` or empty, run:
+
+```powershell
+.\Initialize-Repo.ps1
+```
+
+Do not proceed until `.platform` is populated.
+
+### Step 2 — Verify required tools
+
+```powershell
+$missing = @()
+if (-not (Get-Command pac    -ErrorAction SilentlyContinue)) { $missing += 'pac (Power Platform CLI) — https://aka.ms/PowerAppsCLI' }
+if (-not (Get-Command gh     -ErrorAction SilentlyContinue)) { $missing += 'gh (GitHub CLI) — https://cli.github.com' }
+if (-not (Get-Command dotnet -ErrorAction SilentlyContinue)) { $missing += 'dotnet (.NET SDK) — https://dot.net' }
+if ($missing) { Write-Warning "Missing tools:"; $missing | ForEach-Object { Write-Host "  $_" } }
+else { Write-Host "All required tools found." -ForegroundColor Green }
+```
+
+Also verify `gh` is authenticated (`gh auth status`). If not, run `gh auth login`.
+
+### Step 3 — Install the ALM skills plugin
+
+The full setup skill (`setup-client-repo`) ships as part of the ALM plugin. Install it now so the agent can guide the rest of setup interactively:
+
+```
+/plugin install github:mikefactorial/Agentic-ALM-Workflows
+```
+
+### Step 4 — Hand off to the setup skill
+
+Once the plugin is installed, tell the user:
+
+> "The ALM skills plugin is now installed. Say **'set up this repo'** and the setup skill will walk you through the rest — filling in environment-config.json, wiring GitHub environments and secrets, OIDC credentials, and branch protection."
+
+**Do not attempt to ask setup questions yourself before the plugin is installed.** The `setup-client-repo` skill has the full, up-to-date intake flow.
+
+---
+
 > **Read `deployments/settings/environment-config.json`** at the start of every session to resolve all project-specific values:
 > - `clientName` — human-readable product/client name
 > - `solutionAreas[].name` / `.prefix` / `.role` — solution identifiers
