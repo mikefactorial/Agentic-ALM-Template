@@ -65,6 +65,7 @@ Once the user confirms the plugin is installed/updated, say:
 > - `publisher` — Dataverse publisher name
 > - `githubOrg` + `repoName` — GitHub coordinates
 > - `innerLoopEnvironments[]` / `environments[]` — all environment slugs and URLs
+> - `trackingSystem` — `azureBoards` (default) or `github`; controls branch/commit trailer format
 >
 > Do not assume or hardcode any of these values — always derive them from the config file.
 
@@ -114,12 +115,15 @@ main (production-ready, protected)
  ↑ PR from develop or hotfix/* only (enforced by check-source-branch.yml)
 develop (integration branch)
  ↑ PR from feature branches / transport commits
-feature branches: <type>/AB<WorkItemNumber>_BriefDescription (branch from develop)
+feature branches: <type>/<tag>_BriefDescription (branch from develop)
 hotfix branches: hotfix/<issue-number> (branch from main, merge to both main + develop)
 ```
 
 - Feature branches always branch from `develop`
-- Feature branch naming: `<type>/AB<WorkItemNumber>_BriefDescription`
+- Feature branch naming: `<type>/<tag>_BriefDescription`
+  - `<tag>` is the normalized work item / issue tag:
+    - Azure Boards: `AB12345` (strip `#`, keep `AB` prefix)
+    - GitHub Issue: `GH12345` (replace `#` with `GH` prefix)
   - Types: `feat/`, `fix/`, `chore/`, `refactor/`, `docs/`, `test/`
 - Hotfix branches: `hotfix/<issue-number>` from `main`
 - Push to `main` triggers automatic release package build
@@ -129,12 +133,15 @@ hotfix branches: hotfix/<issue-number> (branch from main, merge to both main + d
 Use [Conventional Commits](https://www.conventionalcommits.org/) format:
 
 ```
-<type>(<scope>): <description> AB#<WorkItemNumber>
+<type>(<scope>): <description> <trailer>
 ```
 
 - **Types**: `feat`, `fix`, `chore`, `refactor`, `docs`, `test`, `build`, `ci`
 - **Scope** (optional): solution name or component area
-- **Work item linking**: append `AB#<WorkItemNumber>` to link to Azure DevOps work item
+- **Work item / issue linking** — append the appropriate trailer:
+  - Azure Boards: `AB#12345`
+  - GitHub Issue: `Closes #12345`
+- Read `trackingSystem` from `deployments/settings/environment-config.json` (`azureBoards` or `github`) for the default
 
 ---
 
@@ -143,7 +150,7 @@ Use [Conventional Commits](https://www.conventionalcommits.org/) format:
 ### Inner Loop (Daily Development)
 
 ```
-1. Branch from develop → AB####_Description
+1. Branch from develop → {tag}_Description
 2. Create feature solution in dev env → set as preferred solution
 3. Develop & iterate in dev
 4. Sync feature solution to feature branch

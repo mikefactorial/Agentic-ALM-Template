@@ -6,6 +6,7 @@
   "repoName": "{{REPO_NAME}}",
   "publisher": "{{PUBLISHER}}",
   "packageTag": "{{PACKAGE_TAG}}",
+  "trackingSystem": "azureBoards",
   "packageProjectPath": "deployments/package/Deployer/PlatformPackage.csproj",
   "solutionAreas": [
     {
