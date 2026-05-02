@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
     inputs:
       environment:
-        description: 'Environment to test'
+        description: 'GitHub Environment Name to test'
         required: true
         type: string
 

@@ -5,7 +5,7 @@
 
 ## Related Work Items
 
-<!-- Azure Boards work item references: AB#12345, AB#12346 -->
+<!-- Azure Boards or GitHub work item references: AB#12345, AB#12346 or #12345, #12346 -->
 
 ## Type of Change
 
