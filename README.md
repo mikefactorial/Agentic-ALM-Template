@@ -27,7 +27,7 @@ deployments/
 main (production-ready, protected)
  ↑ PR from develop or hotfix/* only
 develop (integration branch)
- ↑ PR from feature branches / transport commits
+ ↑ PR from feature branches / stage commits
 feature/AB<N>_Description   (branch from develop)
 hotfix/<issue-number>        (branch from main → merge to both main + develop)
 ```
@@ -44,7 +44,7 @@ Scripts and reusable jobs live in Agentic-ALM-Workflows.
 | `sync-solution.yml` | Manual | Export solution from Dataverse to repo |
 | `build-deploy-solution.yml` | Manual | Build → Deploy (inner loop, no sync) |
 | `sync-build-deploy-solution.yml` | Manual | Sync → Build → Deploy |
-| `transport-solution.yml` | Manual | Transport dev → integration |
+| `Stage-Solution.yml` | Manual | stage dev → integration |
 | `deploy-package.yml` | Manual | Deploy release package to an environment |
 | `deploy-solutions.yml` | Manual / after release | Deploy individual solutions from a release |
 | `create-release-package.yml` | Push to `main` / manual | Build release packages + create GitHub Release |
