@@ -78,14 +78,66 @@ Each deployment target environment needs these variables set in **GitHub Environ
 
 ## Step 5: Configure OIDC Federated Credentials
 
-For each environment's service principal, create a federated credential for GitHub Actions:
+GitHub Actions authenticates to Dataverse using OIDC — no stored passwords or secrets. Every environment (including dev and integration) needs:
 
-```bash
-# Audience: api://AzureADTokenExchange
-# Subject:  repo:{org}/{repo}:environment:{env-slug}
+1. An **Azure AD app registration** (service principal) added as a Dataverse App User
+2. A **federated identity credential** on that app registration, scoped to the GitHub Environment
+
+Two roles are required (may be the same person):
+- **Power Platform Admin** — `pac admin create-service-principal`
+- **Azure AD App Owner** — add the federated credential via Azure CLI
+
+### Step 5a — Create the service principal *(Power Platform Admin)*
+
+Repeat for each environment. The output includes the **Application (Client) ID** you'll need next.
+
+```powershell
+# Install pac if needed
+winget install Microsoft.PowerPlatform.CLI
+
+pac auth create --interactive --environment <dataverse-env-url>
+pac admin create-service-principal --environment <dataverse-env-url>
 ```
 
-Test OIDC auth using the `test-oidc-auth.yml` workflow.
+### Step 5b — Add federated credentials *(Azure AD App Owner)*
+
+```powershell
+# Install Azure CLI if needed
+winget install Microsoft.AzureCLI
+az login
+
+# Run once — list all environment slugs if they share one app registration,
+# or run once per registration if each environment has its own
+.platform/.github/workflows/scripts/Setup-GitHubFederatedCredentials.ps1 `
+    -AppRegistrationId "<client-id>" `
+    -GitHubOrg "<githubOrg>" `
+    -RepositoryName "<repoName>" `
+    -Environments @("<env-slug-1>", "<env-slug-2>", "<env-slug-3>")
+```
+
+The script creates a federated credential for each slug with subject:
+`repo:<githubOrg>/<repoName>:environment:<env-slug>`
+
+It skips credentials that already exist and prints a created / skipped / error summary.
+
+### Step 5c — Set client IDs in GitHub Environments
+
+If you haven't already set `DATAVERSE_CLIENT_ID` in Step 4:
+
+```powershell
+gh variable set DATAVERSE_CLIENT_ID --env <env-slug> --repo "<org>/<repo>" --body "<client-id>"
+```
+
+### Verify
+
+```powershell
+gh workflow run test-oidc-auth.yml --repo "<org>/<repo>"
+gh run watch --repo "<org>/<repo>"
+```
+
+A green run confirms the full OIDC auth chain works for that environment.
+
+> **Need to delegate this to an admin?** Ask the Copilot agent (`"help me set up OIDC"` or `"generate admin OIDC instructions"`) and it will produce a ready-to-share hand-off document via the `setup-oidc` skill.
 
 ---
 
