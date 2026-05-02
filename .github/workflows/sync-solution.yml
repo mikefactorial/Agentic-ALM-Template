@@ -41,7 +41,7 @@ permissions:
 
 jobs:
   sync-solution:
-    uses: {{GITHUB_ORG}}/Agentic-ALM-Workflows/.github/workflows/sync-solution.yml@main
+    uses: mikefactorial/Agentic-ALM-Workflows/.github/workflows/sync-solution.yml@main
     with:
       environment: ${{ inputs.environment }}
       solution_name: ${{ inputs.solution_name }}

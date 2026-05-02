@@ -40,7 +40,7 @@ permissions:
 
 jobs:
   deploy-package:
-    uses: {{GITHUB_ORG}}/Agentic-ALM-Workflows/.github/workflows/deploy-package.yml@main
+    uses: mikefactorial/Agentic-ALM-Workflows/.github/workflows/deploy-package.yml@main
     with:
       environment: ${{ inputs.environment }}
       package: ${{ inputs.package }}

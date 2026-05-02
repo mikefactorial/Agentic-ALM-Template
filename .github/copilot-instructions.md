@@ -82,7 +82,7 @@ Refer to `solutionAreas[]` in `deployments/settings/environment-config.json` for
 
 ## Platform Scripts
 
-PowerShell scripts used by skills and local development live in the `.platform` git submodule, which points to `{{GITHUB_ORG}}/Agentic-ALM-Workflows`. This is the same path used by callable workflows in CI.
+PowerShell scripts used by skills and local development live in the `.platform` git submodule, which points to `mikefactorial/Agentic-ALM-Workflows`. This is the same path used by callable workflows in CI.
 
 **Initialize or update to latest:**
 ```powershell

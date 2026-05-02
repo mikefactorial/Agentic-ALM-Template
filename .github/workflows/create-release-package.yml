@@ -47,7 +47,7 @@ permissions:
 
 jobs:
   call-workflow:
-    uses: {{GITHUB_ORG}}/Agentic-ALM-Workflows/.github/workflows/create-release-package.yml@main
+    uses: mikefactorial/Agentic-ALM-Workflows/.github/workflows/create-release-package.yml@main
     with:
       package_version: ${{ inputs.package_version || '' }}
       create_release: ${{ github.event_name == 'push' || inputs.create_release == true }}

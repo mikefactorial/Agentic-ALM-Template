@@ -33,7 +33,7 @@ permissions:
 
 jobs:
   build-deploy:
-    uses: {{GITHUB_ORG}}/Agentic-ALM-Workflows/.github/workflows/build-deploy-solution.yml@main
+    uses: mikefactorial/Agentic-ALM-Workflows/.github/workflows/build-deploy-solution.yml@main
     with:
       solution_name: ${{ inputs.solution_name }}
       target_environments: ${{ inputs.target_environments }}

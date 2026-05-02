@@ -58,7 +58,7 @@ permissions:
 
 jobs:
   transport:
-    uses: {{GITHUB_ORG}}/Agentic-ALM-Workflows/.github/workflows/transport-solution.yml@main
+    uses: mikefactorial/Agentic-ALM-Workflows/.github/workflows/transport-solution.yml@main
     with:
       source_environment: ${{ inputs.source_environment }}
       target_environment: ${{ inputs.target_environment }}

@@ -55,7 +55,7 @@ permissions:
 
 jobs:
   sync-build-deploy:
-    uses: {{GITHUB_ORG}}/Agentic-ALM-Workflows/.github/workflows/sync-build-deploy-solution.yml@main
+    uses: mikefactorial/Agentic-ALM-Workflows/.github/workflows/sync-build-deploy-solution.yml@main
     with:
       source_environment: ${{ inputs.source_environment }}
       solution_name: ${{ inputs.solution_name }}
