@@ -230,6 +230,6 @@ pac auth select --index <n>
 5. **Settings templates are auto-generated** during sync — don't edit templates directly
 6. **Date-based versioning**: `YYYY.MM.DD.N` (e.g., `2026.04.06.1`), auto-calculated from git tags
 7. **Package deploy** (outer loop) vs **solution import** (inner loop) — don't mix them up
-8. **Staging must go via GitHub Actions workflow** — branch protection prevents direct pushes
+8. **Staging runs locally** — `Stage-Solution.ps1` + `Sync-Solution.ps1` locally, then open a sync PR to `develop`
 9. **dotnet build for inner loop** — `Build-Solutions.ps1` is outer-loop/CI only
 10. **Always sync before deploying to dev-test** — never assume a feature is code-first only

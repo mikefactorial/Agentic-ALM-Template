@@ -254,7 +254,7 @@ Per-environment GitHub variables:
 
 ## Critical Rules
 
-1. **Staging workflow** (`stage-solution.yml`) — always use GitHub Actions; never run `Stage-Solution.ps1` locally
+1. **Staging runs locally** — run `Stage-Solution.ps1 -Phase All` then `Sync-Solution.ps1` to a sync branch, then open a PR to `develop`; the `stage-solution.yml` workflow is available but not required
 2. **Hook ContinueOnError = true** by default — hooks shouldn't stop the pipeline unless critical
 3. **`check-source-branch.yml`** is currently disabled — when enabled, enforces `main` ← `develop`/`hotfix/*` only
 4. **App tokens**: Sync and stage workflows use GitHub App tokens for git operations (not the default `GITHUB_TOKEN`)
