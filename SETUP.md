@@ -89,13 +89,56 @@ Test OIDC auth using the `test-oidc-auth.yml` workflow.
 
 ---
 
-## Step 6: Branch Protection
+## Step 6: Commit Setup Changes and Create Develop Branch
 
-Configure branch protection rules in GitHub:
-- `main`: require PR from `develop` or `hotfix/*` only (enforced by `check-source-branch.yml`)
-- `develop`: require PR reviews, no direct pushes for contributors
+After completing configuration, commit everything and create the `develop` branch:
+
+```powershell
+git add -A
+git commit -m "chore: initial repo setup — environment-config, package project, GitHub environments"
+git push origin main
+
+# Create develop branch from main if it doesn't already exist
+$developExists = git ls-remote --heads origin develop
+if (-not $developExists) {
+    git checkout -b develop
+    git push origin develop
+    git checkout main
+}
+```
 
 ---
+
+## Step 7: Branch Protection
+
+Use `gh` to configure protection rules for both branches:
+
+```powershell
+$org  = "<githubOrg>"
+$repo = "<repoName>"
+
+# main — require PR, no direct pushes, no force push
+gh api --method PUT /repos/$org/$repo/branches/main/protection `
+    --field required_status_checks=null `
+    --field enforce_admins=false `
+    --field "required_pull_request_reviews[dismiss_stale_reviews]=true" `
+    --field "required_pull_request_reviews[required_approving_review_count]=1" `
+    --field "restrictions=null" `
+    --field allow_force_pushes=false `
+    --field allow_deletions=false
+
+# develop — require PR review, no direct pushes, no force push
+gh api --method PUT /repos/$org/$repo/branches/develop/protection `
+    --field required_status_checks=null `
+    --field enforce_admins=false `
+    --field "required_pull_request_reviews[dismiss_stale_reviews]=true" `
+    --field "required_pull_request_reviews[required_approving_review_count]=1" `
+    --field "restrictions=null" `
+    --field allow_force_pushes=false `
+    --field allow_deletions=false
+```
+
+> Source-branch enforcement for `main` (PRs from `develop`/`hotfix/*` only) is handled by `check-source-branch.yml` — the GitHub API does not support this at the branch protection level.
 
 ## Step 7: Initialize Submodules
 
