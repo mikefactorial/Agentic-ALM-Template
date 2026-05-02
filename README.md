@@ -2,6 +2,37 @@
 
 {{PRODUCT_DESCRIPTION}}
 
+---
+
+<!-- TEMPLATE INFO — delete this section after setup is complete -->
+
+## About This Template
+
+This repository was created from [Agentic-ALM-Template](https://github.com/mikefactorial/Agentic-ALM-Template) — a production-ready starting point for enterprise Power Platform ALM using GitHub Actions and GitHub Copilot agent skills.
+
+The template provides:
+- **Agentic setup and development** — a GitHub Copilot plugin (`power-platform-alm`) with skills that automate the full ALM lifecycle in plain English: start features, sync solutions, deploy, stage, release
+- **Feature solution isolation** — each work item gets its own Dataverse feature solution; components stage to integration when validated, keeping the main solution always releasable
+- **OIDC authentication** — GitHub Actions authenticates to Dataverse without stored secrets using federated identity credentials on Azure AD app registrations
+- **Package Deployer outer loop** — releases are versioned `.ppkg` packages that carry all solutions, deployment settings, and configuration data, deployed atomically across environments
+- **Thin caller CI/CD** — all workflow logic lives in [Agentic-ALM-Workflows](https://github.com/mikefactorial/Agentic-ALM-Workflows) (the `.platform` submodule); this repo contains only `on:` triggers and `uses:` references
+
+### Documentation
+
+| Area | README |
+|------|--------|
+| Solution metadata and the inner ALM loop | [src/solutions/README.md](src/solutions/README.md) |
+| Plugin development and registration | [src/plugins/README.md](src/plugins/README.md) |
+| PCF control development | [src/controls/README.md](src/controls/README.md) |
+| Environments, environment variables, connection references | [deployments/settings/README.md](deployments/settings/README.md) |
+| Configuration and reference data | [deployments/data/README.md](deployments/data/README.md) |
+| Package Deployer project (outer loop) | [deployments/package/README.md](deployments/package/README.md) |
+| First-time setup | [SETUP.md](SETUP.md) |
+
+<!-- END TEMPLATE INFO -->
+
+---
+
 ## Quick Start
 
 See [SETUP.md](SETUP.md) for initial configuration steps after cloning this template.
