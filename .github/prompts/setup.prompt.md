@@ -36,11 +36,15 @@ else { Write-Host "All required tools found." -ForegroundColor Green }
 
 Also check `gh auth status`. If not authenticated, run `gh auth login`.
 
-## Step 3: Install the ALM Skills Plugin
+## Step 3: Install or Update the ALM Skills Plugin
 
 The `power-platform-alm` plugin is recommended by this workspace. VS Code should show a notification — click **Install** if it appears.
 
-If no notification appears:
+If the plugin is already installed, it may be out of date. Run this command first to force-refresh all installed plugins to their latest versions:
+
+**Command Palette (`Ctrl+Shift+P`) → `Chat: Update Plugins (Force)`**
+
+If no notification appears and the plugin is not yet installed:
 
 **Option A — Extensions sidebar:**
 1. Open Extensions (`Ctrl+Shift+X`)
@@ -51,7 +55,7 @@ If no notification appears:
 1. `Ctrl+Shift+P` → `Chat: Install Plugin From Source`
 2. Enter `https://github.com/mikefactorial/Agentic-ALM-Workflows`
 
-Wait for the user to confirm the plugin is installed before continuing.
+Wait for the user to confirm the plugin is installed (or updated) before continuing.
 
 ## Step 4: Run Setup
 

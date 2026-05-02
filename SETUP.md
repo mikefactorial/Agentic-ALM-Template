@@ -122,3 +122,9 @@ Run the same script any time to update:
 ```
 
 This updates `.platform` to the latest `Agentic-ALM-Workflows` main, then reminds you to refresh the plugin. Idempotent — safe to re-run.
+
+After running `Initialize-Repo.ps1`, also update the plugin in VS Code to pick up any new or changed skills:
+
+**Command Palette (`Ctrl+Shift+P`) → `Chat: Update Plugins (Force)`**
+
+This forces VS Code to re-fetch all installed agent plugins from their sources, ensuring the locally cached skill files match the latest version.

@@ -41,13 +41,13 @@ Also verify `gh` is authenticated (`gh auth status`). If not, run `gh auth login
 
 Ask the user directly:
 
-> "Before we continue, I need to confirm the `power-platform-alm` plugin is installed and up to date in your VS Code. To install or update it, run **`Chat: Install Plugin From Source`** from the Command Palette (`Ctrl+Shift+P`) and enter `https://github.com/mikefactorial/Agentic-ALM-Workflows`. Can you confirm it's installed?"
+> "Before we continue, I need to confirm the `power-platform-alm` plugin is installed and up to date in your VS Code. If the plugin is already installed, run **`Chat: Update Plugins (Force)`** from the Command Palette (`Ctrl+Shift+P`) to pull the latest version. If it is not yet installed, run **`Chat: Install Plugin From Source`** and enter `https://github.com/mikefactorial/Agentic-ALM-Workflows`. Can you confirm it's installed and up to date?"
 
 Wait for an explicit confirmation before proceeding. Do **not** assume the plugin is already installed because `.platform` or other prerequisites are in place — those are independent checks.
 
 If VS Code shows a notification for `power-platform-alm`, the user can click **Install** there. Or from the Extensions sidebar (`Ctrl+Shift+X`), search `@agentPlugins power-platform-alm`.
 
-> **Why update matters**: the plugin caches skill files locally. If the plugin was installed in a previous session, it may have stale skills that are missing recent fixes. Always re-run "Install Plugin From Source" when first opening a new client repo or after `Initialize-Repo.ps1` is run.
+> **Why update matters**: the plugin caches skill files locally. If the plugin was installed in a previous session, it may have stale skills that are missing recent fixes. Use **`Chat: Update Plugins (Force)`** (Command Palette) to refresh all installed plugins to their latest version. Use `Chat: Install Plugin From Source` only if the plugin has never been installed.
 
 ### Step 4 — Hand off to the setup skill
 
@@ -98,6 +98,9 @@ ALM skills (start-feature, scaffold-plugin, deploy-solution, etc.) ship as the `
 - VS Code will suggest it automatically (workspace recommendation) — click **Install** in the notification
 - Or: Extensions view (`Ctrl+Shift+X`) → search `@agentPlugins power-platform-alm` → Install
 - Or: Command Palette → `Chat: Install Plugin From Source` → `https://github.com/mikefactorial/Agentic-ALM-Workflows`
+
+**Already installed? Update to latest:**
+- Command Palette → `Chat: Update Plugins (Force)`
 
 **Install for Claude Code (once `.platform` is initialized):**
 ```bash
