@@ -35,31 +35,27 @@ else { Write-Host "All required tools found." -ForegroundColor Green }
 
 Also verify `gh` is authenticated (`gh auth status`). If not, run `gh auth login`.
 
-### Step 3 — Install the ALM skills plugin
+### Step 3 — Install or update the ALM skills plugin
 
-The `power-platform-alm` plugin is recommended by this workspace. VS Code should show a notification — if so, click **Install**.
+**STOP. Do not proceed past this step until you have explicitly confirmed the plugin is installed and up to date.**
 
-If no notification appears, install manually using one of these methods:
+Ask the user directly:
 
-**Option A — Extensions sidebar (recommended):**
-1. Open the Extensions view (`Ctrl+Shift+X`)
-2. Search for `@agentPlugins power-platform-alm`
-3. Select **Install**
+> "Before we continue, I need to confirm the `power-platform-alm` plugin is installed and up to date in your VS Code. To install or update it, run **`Chat: Install Plugin From Source`** from the Command Palette (`Ctrl+Shift+P`) and enter `https://github.com/mikefactorial/Agentic-ALM-Workflows`. Can you confirm it's installed?"
 
-**Option B — Command Palette:**
-1. Open the Command Palette (`Ctrl+Shift+P`)
-2. Run `Chat: Install Plugin From Source`
-3. Enter: `https://github.com/mikefactorial/Agentic-ALM-Workflows`
+Wait for an explicit confirmation before proceeding. Do **not** assume the plugin is already installed because `.platform` or other prerequisites are in place — those are independent checks.
 
-Wait for the user to confirm the plugin is installed before continuing.
+If VS Code shows a notification for `power-platform-alm`, the user can click **Install** there. Or from the Extensions sidebar (`Ctrl+Shift+X`), search `@agentPlugins power-platform-alm`.
+
+> **Why update matters**: the plugin caches skill files locally. If the plugin was installed in a previous session, it may have stale skills that are missing recent fixes. Always re-run "Install Plugin From Source" when first opening a new client repo or after `Initialize-Repo.ps1` is run.
 
 ### Step 4 — Hand off to the setup skill
 
-Once the plugin is installed, tell the user:
+Once the user confirms the plugin is installed/updated, say:
 
-> "The ALM skills plugin is now installed. Say **'set up this repo'** and the setup skill will walk you through the rest — filling in environment-config.json, wiring GitHub environments and secrets, OIDC credentials, and branch protection."
+> "Great — the plugin is ready. Say **'set up this repo'** and the setup skill will walk you through the rest — filling in environment-config.json, wiring GitHub environments and secrets, OIDC credentials, and branch protection."
 
-**Do not attempt to ask setup questions yourself before the plugin is installed.** The `setup-client-repo` skill has the full, up-to-date intake flow. Do not bypass it by running setup inline.
+**HARD STOP — if the user has not confirmed the plugin is installed and up to date, do not proceed with any setup questions. Do not run setup inline. Redirect them to Step 3.**
 
 ---
 
