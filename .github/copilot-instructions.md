@@ -37,11 +37,15 @@ Also verify `gh` is authenticated (`gh auth status`). If not, run `gh auth login
 
 ### Step 3 — Install the ALM skills plugin
 
-The full setup skill (`setup-client-repo`) ships as part of the ALM plugin. Install it now so the agent can guide the rest of setup interactively:
+The full setup skill (`setup-client-repo`) ships as part of the ALM plugin. Tell the user to run this directly in the Copilot Chat input box:
 
 ```
 /plugin install github:mikefactorial/Agentic-ALM-Workflows
 ```
+
+> **Important:** `/plugin install` is a Copilot Chat command — it must be typed by the user in the chat input box and submitted as a message. It is **not** a terminal command and cannot be run in the terminal. Do not attempt to run it in a terminal or interpret terminal exit codes as its result.
+
+Wait for the user to confirm it ran, then continue to Step 4.
 
 ### Step 4 — Hand off to the setup skill
 
@@ -49,7 +53,7 @@ Once the plugin is installed, tell the user:
 
 > "The ALM skills plugin is now installed. Say **'set up this repo'** and the setup skill will walk you through the rest — filling in environment-config.json, wiring GitHub environments and secrets, OIDC credentials, and branch protection."
 
-**Do not attempt to ask setup questions yourself before the plugin is installed.** The `setup-client-repo` skill has the full, up-to-date intake flow.
+**Do not attempt to ask setup questions yourself before the plugin is installed.** The `setup-client-repo` skill has the full, up-to-date intake flow. Do not bypass it by running setup inline.
 
 ---
 

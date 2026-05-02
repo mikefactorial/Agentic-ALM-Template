@@ -38,9 +38,15 @@ Also check `gh auth status`. If not authenticated, run `gh auth login`.
 
 ## Step 3: Install the ALM Skills Plugin
 
+Tell the user to type the following directly in the Copilot Chat input box and press Enter:
+
 ```
 /plugin install github:mikefactorial/Agentic-ALM-Workflows
 ```
+
+> **Note:** This is a Copilot Chat command, not a terminal command. Do not run it in the terminal.
+
+Wait for the user to confirm it ran before continuing.
 
 ## Step 4: Run Setup
 
