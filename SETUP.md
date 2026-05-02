@@ -97,7 +97,7 @@ Configure branch protection rules in GitHub:
 
 ---
 
-## Step 8: Initialize Submodules
+## Step 7: Initialize Submodules
 
 This repo has one submodule:
 

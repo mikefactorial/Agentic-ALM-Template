@@ -35,7 +35,7 @@ hotfix/<issue-number>        (branch from main → merge to both main + develop)
 ## CI/CD
 
 All workflows are **thin callers** — they delegate to
-`{{GITHUB_ORG}}/Agentic-ALM-Workflows`
+`mikefactorial/Agentic-ALM-Workflows`
 and only contain `on:` triggers and `uses:` references.
 Scripts and reusable jobs live in Agentic-ALM-Workflows.
 
