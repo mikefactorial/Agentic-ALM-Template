@@ -37,15 +37,21 @@ Also verify `gh` is authenticated (`gh auth status`). If not, run `gh auth login
 
 ### Step 3 — Install the ALM skills plugin
 
-The full setup skill (`setup-client-repo`) ships as part of the ALM plugin. Tell the user to run this directly in the Copilot Chat input box:
+The `power-platform-alm` plugin is recommended by this workspace. VS Code should show a notification — if so, click **Install**.
 
-```
-/plugin install github:mikefactorial/Agentic-ALM-Workflows
-```
+If no notification appears, install manually using one of these methods:
 
-> **Important:** `/plugin install` is a Copilot Chat command — it must be typed by the user in the chat input box and submitted as a message. It is **not** a terminal command and cannot be run in the terminal. Do not attempt to run it in a terminal or interpret terminal exit codes as its result.
+**Option A — Extensions sidebar (recommended):**
+1. Open the Extensions view (`Ctrl+Shift+X`)
+2. Search for `@agentPlugins power-platform-alm`
+3. Select **Install**
 
-Wait for the user to confirm it ran, then continue to Step 4.
+**Option B — Command Palette:**
+1. Open the Command Palette (`Ctrl+Shift+P`)
+2. Run `Chat: Install Plugin From Source`
+3. Enter: `https://github.com/mikefactorial/Agentic-ALM-Workflows`
+
+Wait for the user to confirm the plugin is installed before continuing.
 
 ### Step 4 — Hand off to the setup skill
 
@@ -89,12 +95,12 @@ All skill script references use `.platform/.github/workflows/scripts/`. If `.pla
 
 ## Agent Skills (Plugin)
 
-ALM skills (start-feature, scaffold-plugin, deploy-solution, etc.) ship as an installable plugin from `Agentic-ALM-Workflows`. Skills cover the full inner and outer loop.
+ALM skills (start-feature, scaffold-plugin, deploy-solution, etc.) ship as the `power-platform-alm` plugin from `Agentic-ALM-Workflows`. Skills cover the full inner and outer loop.
 
-**Install for GitHub Copilot:**
-```
-/plugin install github:mikefactorial/Agentic-ALM-Workflows
-```
+**Install for GitHub Copilot (VS Code):**
+- VS Code will suggest it automatically (workspace recommendation) — click **Install** in the notification
+- Or: Extensions view (`Ctrl+Shift+X`) → search `@agentPlugins power-platform-alm` → Install
+- Or: Command Palette → `Chat: Install Plugin From Source` → `https://github.com/mikefactorial/Agentic-ALM-Workflows`
 
 **Install for Claude Code (once `.platform` is initialized):**
 ```bash

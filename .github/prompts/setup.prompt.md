@@ -38,15 +38,20 @@ Also check `gh auth status`. If not authenticated, run `gh auth login`.
 
 ## Step 3: Install the ALM Skills Plugin
 
-Tell the user to type the following directly in the Copilot Chat input box and press Enter:
+The `power-platform-alm` plugin is recommended by this workspace. VS Code should show a notification — click **Install** if it appears.
 
-```
-/plugin install github:mikefactorial/Agentic-ALM-Workflows
-```
+If no notification appears:
 
-> **Note:** This is a Copilot Chat command, not a terminal command. Do not run it in the terminal.
+**Option A — Extensions sidebar:**
+1. Open Extensions (`Ctrl+Shift+X`)
+2. Search `@agentPlugins power-platform-alm`
+3. Click Install
 
-Wait for the user to confirm it ran before continuing.
+**Option B — Command Palette:**
+1. `Ctrl+Shift+P` → `Chat: Install Plugin From Source`
+2. Enter `https://github.com/mikefactorial/Agentic-ALM-Workflows`
+
+Wait for the user to confirm the plugin is installed before continuing.
 
 ## Step 4: Run Setup
 
