@@ -11,8 +11,8 @@
 This repository was created from [Agentic-ALM-Template](https://github.com/mikefactorial/Agentic-ALM-Template) — a production-ready starting point for enterprise Power Platform ALM using GitHub Actions and GitHub Copilot agent skills.
 
 The template provides:
-- **Agentic setup and development** — a GitHub Copilot plugin (`power-platform-alm`) with skills that automate the full ALM lifecycle in plain English: start features, sync solutions, deploy, stage, release
-- **Feature solution isolation** — each work item gets its own Dataverse feature solution; components stage to integration when validated, keeping the main solution always releasable
+- **Agentic setup and development** — a GitHub Copilot plugin (`power-platform-alm`) with skills that automate the full ALM lifecycle in plain English: start features, sync solutions, deploy, promote, release
+- **Feature solution isolation** — each work item gets its own Dataverse feature solution; components promote to integration when validated, keeping the main solution always releasable
 - **OIDC authentication** — GitHub Actions authenticates to Dataverse without stored secrets using federated identity credentials on Azure AD app registrations
 - **Package Deployer outer loop** — releases are versioned `.ppkg` packages that carry all solutions, deployment settings, and configuration data, deployed atomically across environments
 - **Thin caller CI/CD** — all workflow logic lives in [Agentic-ALM-Workflows](https://github.com/mikefactorial/Agentic-ALM-Workflows) (the `.platform` submodule); this repo contains only `on:` triggers and `uses:` references
@@ -58,7 +58,7 @@ deployments/
 main (production-ready, protected)
  ↑ PR from develop or hotfix/* only
 develop (integration branch)
- ↑ PR from feature branches / stage commits
+ ↑ PR from feature branches / promote commits
 feature/AB<N>_Description   (branch from develop)
 hotfix/<issue-number>        (branch from main → merge to both main + develop)
 ```
@@ -75,7 +75,7 @@ Scripts and reusable jobs live in Agentic-ALM-Workflows.
 | `sync-solution.yml` | Manual | Export solution from Dataverse to repo |
 | `build-deploy-solution.yml` | Manual | Build → Deploy (inner loop, no sync) |
 | `sync-build-deploy-solution.yml` | Manual | Sync → Build → Deploy |
-| `Stage-Solution.yml` | Manual | stage dev → integration |
+| `Promote-Solution.yml` | Manual | promote dev → integration |
 | `deploy-package.yml` | Manual | Deploy release package to an environment |
 | `deploy-solutions.yml` | Manual / after release | Deploy individual solutions from a release |
 | `create-release-package.yml` | Push to `main` / manual | Build release packages + create GitHub Release |

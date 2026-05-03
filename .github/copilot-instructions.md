@@ -117,7 +117,7 @@ After installing, describe any ALM task in plain English — the `alm-overview` 
 main (production-ready, protected)
  ↑ PR from develop or hotfix/* only (enforced by check-source-branch.yml)
 develop (integration branch)
- ↑ PR from feature branches / stage commits
+ ↑ PR from feature branches / promote commits
 feature branches: <type>/<tag>_BriefDescription (branch from develop)
 hotfix branches: hotfix/<issue-number> (branch from main, merge to both main + develop)
 ```
@@ -159,7 +159,7 @@ Use [Conventional Commits](https://www.conventionalcommits.org/) format:
 4. Sync feature solution to feature branch
 5. Build + deploy feature solution to dev-test
 6. Test in dev-test environment
-7. After validation: stage feature solution from dev → integration
+7. After validation: promote feature solution from dev → integration
 8. Merge feature branch → develop (PR for code-first changes)
 ```
 
@@ -233,6 +233,6 @@ pac auth select --index <n>
 5. **Settings templates are auto-generated** during sync — don't edit templates directly
 6. **Date-based versioning**: `YYYY.MM.DD.N` (e.g., `2026.04.06.1`), auto-calculated from git tags
 7. **Package deploy** (outer loop) vs **solution import** (inner loop) — don't mix them up
-8. **Staging runs locally** — `Stage-Solution.ps1` + `Sync-Solution.ps1` locally, then open a sync PR to `develop`
+8. **Promotion runs locally** — `Promote-Solution.ps1` + `Sync-Solution.ps1` locally, then open a sync PR to `develop`
 9. **dotnet build for inner loop** — `Build-Solutions.ps1` is outer-loop/CI only
 10. **Always sync before deploying to dev-test** — never assume a feature is code-first only

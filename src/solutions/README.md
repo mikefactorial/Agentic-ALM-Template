@@ -38,7 +38,7 @@ Feature solution (acm_AB1234_MyFeature)  ← developer's scratch space
 1. **Start feature** — `start-feature` skill creates a feature solution in your dev environment and sets it as the preferred solution. New components go here automatically.
 2. **Develop and iterate** — build and customize in the dev environment. Sync to your feature branch with the `sync-solution` skill.
 3. **Test in dev-test** — deploy the feature solution (managed) to the dev-test environment with the `deploy-solution` skill. This validates the solution in a clean environment before integration.
-4. **Stage to integration** — once validated, the `stage-solution` skill runs `Stage-Solution.ps1` locally to copy components from your feature solution into the main solution in the integration environment, then opens a sync PR to `develop`.
+4. **Promote to integration** — once validated, the `promote-solution` skill runs `Promote-Solution.ps1` locally to copy components from your feature solution into the main solution in the integration environment, then opens a sync PR to `develop`.
 5. **PR merge** — code-first changes (plugins, controls) are reviewed and merged. Solution metadata flows via the sync PR.
 
 ### Outer Loop: Release

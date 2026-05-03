@@ -1,8 +1,8 @@
-name: Stage Solution
+name: Promote Solution
 
-run-name: 'Staging ${{ inputs.source_solution_name }} from ${{ inputs.source_environment }} to ${{ inputs.target_environment }}'
+run-name: 'Promoting ${{ inputs.source_solution_name }} from ${{ inputs.source_environment }} to ${{ inputs.target_environment }}'
 
-# Workflow to stage a solution from one environment to another
+# Workflow to promote a solution from one environment to another
 # Exports from source, imports to target, and copies components to a target solution
 
 on:
@@ -25,7 +25,7 @@ on:
         required: true
         type: string
       sync_target_solution:
-        description: 'Sync target solution to repository after stage'
+        description: 'Sync target solution to repository after promote'
         required: false
         type: boolean
         default: false
@@ -33,7 +33,7 @@ on:
         description: 'Commit message for solution sync (if sync is enabled)'
         required: false
         type: string
-        default: 'chore: automated solution sync after stage'
+        default: 'chore: automated solution sync after promote'
       sync_branch_name:
         description: 'Branch name for solution sync (if sync is enabled)'
         required: false
@@ -57,8 +57,8 @@ permissions:
   pull-requests: write
 
 jobs:
-  stage:
-    uses: mikefactorial/Agentic-ALM-Workflows/.github/workflows/Stage-Solution.yml@main
+  promote:
+    uses: mikefactorial/Agentic-ALM-Workflows/.github/workflows/promote-solution.yml@main
     with:
       source_environment: ${{ inputs.source_environment }}
       target_environment: ${{ inputs.target_environment }}

@@ -15,7 +15,7 @@ applyTo: ".github/workflows/**"
 | `sync-solution.yml` | Manual dispatch | Sync solution from integration env → repo (commits to branch) |
 | `sync-build-deploy-solution.yml` | Manual dispatch | Sync from dev → build → deploy (always syncs first) |
 | `build-deploy-solution.yml` | Manual dispatch | Build from current branch → deploy (no sync, for feature branches) |
-| `stage-solution.yml` | Manual dispatch | Stage components: dev → integration (export → import → copy) |
+| `promote-solution.yml` | Manual dispatch | Stage components: dev → integration (export → import → copy) |
 
 ### Outer Loop (Build, Release, Deploy)
 
@@ -70,7 +70,7 @@ Runs on the caller's current branch — designed for feature branch → dev-test
 
 Always syncs first (job dependency chain: sync → build → deploy).
 
-### stage-solution.yml
+### promote-solution.yml
 
 | Input | Type | Required | Default | Choices |
 |-------|------|----------|---------|---------|
@@ -79,7 +79,7 @@ Always syncs first (job dependency chain: sync → build → deploy).
 | `source_solution_name` | string | yes | — | — |
 | `target_solution_name` | string | yes | — | — |
 | `sync_target_solution` | boolean | no | false (dispatch) / true (call) | — |
-| `sync_commit_message` | string | no | `chore: automated solution sync after stage` | — |
+| `sync_commit_message` | string | no | `chore: automated solution sync after promote` | — |
 | `sync_branch_name` | string | no | `develop` | — |
 | `publish_customizations` | boolean | no | true | — |
 
@@ -132,12 +132,12 @@ All scripts in `.github/workflows/scripts/`:
 | `Deploy-Solutions.ps1` | `-solutionList`, `-targetEnvironment`, `-environmentUrl`, `-artifactsPath`, `-tenantId`, `-clientId`, `-continueOnError`, `-useUpgrade` |
 | `Deploy-Package.ps1` | `-packageGroup`, `-solutions`, `-targetEnvironment`, `-environmentUrl`, `-tenantId`, `-clientId` |
 
-### Sync/Stage Scripts
+### Sync/Promote Scripts
 
 | Script | Key Parameters |
 |--------|---------------|
 | `Sync-Solution.ps1` | `-solutionName`, `-environmentUrl`, `-skipGitCommit`, `-branchName`, `-commitMessage` |
-| `Stage-Solution.ps1` | `-sourceSolutionName`, `-targetSolutionName`, `-sourceEnvironmentUrl`, `-targetEnvironmentUrl` |
+| `Promote-Solution.ps1` | `-sourceSolutionName`, `-targetSolutionName`, `-sourceEnvironmentUrl`, `-targetEnvironmentUrl` |
 | `Copy-Components.ps1` | `-environmentUrl`, `-sourceSolutionName`, `-targetSolutionName` |
 
 ### Settings/Config Scripts
@@ -167,8 +167,8 @@ All scripts in `.github/workflows/scripts/`:
 | `pre-unpack-canvas` / `post-unpack-canvas` | Canvas app .msapp extraction | Sync-Solution.ps1 |
 | `pre-commit` / `post-commit` | Before/after git commit | Sync-Solution.ps1 |
 | `pre-build` / `post-build` | Before/after solution build | Build-Solutions.ps1 |
-| `pre-export` / `post-export` | Before/after solution export | Stage-Solution.ps1 |
-| `pre-import` / `post-import` | Before/after solution import | Stage-Solution.ps1 |
+| `pre-export` / `post-export` | Before/after solution export | Promote-Solution.ps1 |
+| `pre-import` / `post-import` | Before/after solution import | Promote-Solution.ps1 |
 | `pre-deploy` / `post-deploy` | Before/after deployment | Deploy-Solutions.ps1 |
 
 ### Hook Invocation Pattern
@@ -249,12 +249,12 @@ Per-environment GitHub variables:
 
 - `build-deploy-solution.yml`: Per-solution-per-environment (no cancel-in-progress)
 - `create-release-package.yml`: Per-ref (cancel-in-progress: true)
-- `stage-solution.yml`: Single concurrency group (no cancellation)
+- `promote-solution.yml`: Single concurrency group (no cancellation)
 - Deploy workflows use `max-parallel` to control simultaneous deployments
 
 ## Critical Rules
 
-1. **Staging runs locally** — run `Stage-Solution.ps1 -Phase All` then `Sync-Solution.ps1` to a sync branch, then open a PR to `develop`; the `stage-solution.yml` workflow is available but not required
+1. **Promotion runs locally** — run `Promote-Solution.ps1 -Phase All` then `Sync-Solution.ps1` to a sync branch, then open a PR to `develop`; the `promote-solution.yml` workflow is available but not required
 2. **Hook ContinueOnError = true** by default — hooks shouldn't stop the pipeline unless critical
 3. **`check-source-branch.yml`** is currently disabled — when enabled, enforces `main` ← `develop`/`hotfix/*` only
-4. **App tokens**: Sync and stage workflows use GitHub App tokens for git operations (not the default `GITHUB_TOKEN`)
+4. **App tokens**: Sync and promote workflows use GitHub App tokens for git operations (not the default `GITHUB_TOKEN`)
