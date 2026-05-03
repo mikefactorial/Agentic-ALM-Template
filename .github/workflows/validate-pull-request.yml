@@ -13,7 +13,7 @@ permissions:
 
 jobs:
   validate:
-    uses: mikefactorial/Agentic-ALM-Workflows/.github/workflows/pr-validation.yml@main
+    uses: mikefactorial/Agentic-ALM-Workflows/.github/workflows/validate-pull-request.yml@main
     with:
       base_ref: ${{ github.event.pull_request.base.ref }}
       head_ref: ${{ github.event.pull_request.head.ref }}
