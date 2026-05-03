@@ -11,22 +11,53 @@ Each step shows two paths:
 ## Workflow Map
 
 ```
-develop ──────────────────────────────────────────────────────► main
-   │                                                               │
-   │  feature/<tag>_Description                                    │
-   ├──► 1. Start feature (branch + feature solution in dev)        │
-   │    2. Build in Dataverse dev environment                       │
-   │    3. Sync feature solution → branch                          │
-   │    4. Build + deploy to dev-test                              │
-   │    5. Test in dev-test                                         │
-   │    6. Promote feature → integration (or dev if no integration) │
-   │    7. Sync main solution → sync PR → develop                  │
-   │    8. (If code-first) Code PR → develop                       │
-   └──────────────────────────────────────────────────────────────►│
-                                                                    │
-                                              9. PR develop → main ─┤
-                                            10. Release package built│
-                                            11. Deploy to test/prod ─┘
+┌─────────────────────────────────────────────────────────────────────────┐
+│                           INNER LOOP                                    │
+│                                                                         │
+│  [develop] ──► branch: feat/AB12345_Description                         │
+│                  │                                                      │
+│                  ▼                                                      │
+│           1. Start feature ──► create feature solution in dev           │
+│                  │                                                      │
+│                  ▼                                                      │
+│           2. Build & iterate in the Dataverse dev environment           │
+│                  │                                                      │
+│                  ▼                                                      │
+│           3. Sync feature solution ──► commits to feature branch        │
+│                  │                                                      │
+│                  ▼                                                      │
+│           4. Build + deploy to dev-test (managed)                       │
+│                  │                                                      │
+│                  ▼                                                      │
+│           5. Test in dev-test                                            │
+│                  │                                                      │
+│                  ▼                                                      │
+│           6. Promote feature ──► copies components into main solution   │
+│              (dev → integration, or dev → dev if no integration env)    │
+│                  │                                                      │
+│                  ▼                                                      │
+│           7. Sync main solution ──► sync/mainSolution-AB12345 branch    │
+│                  │                    │                                 │
+│                  │                    └──► PR to [develop] ◄────────┐  │
+│                  │                                                   │  │
+│                  └── (code-first only) ──────────────────────────────┘  │
+│                    8. Code PR to [develop] via Create-FeatureCodePR.ps1 │
+└─────────────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────────────┐
+│                           OUTER LOOP                                    │
+│                                                                         │
+│  [develop] ──────────────────────────────────────────────────────────► │
+│                                                                         │
+│           9.  PR: develop → main                                        │
+│                  │                                                      │
+│                  ▼                                                      │
+│          10. Push to main triggers create-release-package.yml           │
+│              ──► versioned .ppkg built, GitHub Release created          │
+│                  │                                                      │
+│                  ▼                                                      │
+│          11. Manual: run deploy-package.yml ──► deploy to test / prod   │
+└─────────────────────────────────────────────────────────────────────────┘
 ```
 
 ---
