@@ -84,7 +84,7 @@ The full environment set is:
 | Environment | Type | Inner/Outer | Purpose |
 |-------------|------|-------------|---------|
 | Dev | Unmanaged | Inner | Developer sandbox — feature solutions created and iterated here |
-| Integration | Unmanaged | Inner | Assembly point — staged feature components assembled before release |
+| Integration | Unmanaged | Inner | Assembly point — promoted feature components assembled before release |
 | Dev-Test | Managed | Outer (inner loop validation) | Validates individual features as managed before integration |
 | Test / UAT | Managed | Outer | User acceptance testing; receives release packages |
 | Production | Managed | Outer | Live system; receives release packages after UAT sign-off |

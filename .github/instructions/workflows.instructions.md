@@ -15,7 +15,7 @@ applyTo: ".github/workflows/**"
 | `sync-solution.yml` | Manual dispatch | Sync solution from integration env → repo (commits to branch) |
 | `sync-build-deploy-solution.yml` | Manual dispatch | Sync from dev → build → deploy (always syncs first) |
 | `build-deploy-solution.yml` | Manual dispatch | Build from current branch → deploy (no sync, for feature branches) |
-| `promote-solution.yml` | Manual dispatch | Stage components: dev → integration (export → import → copy) |
+| `promote-solution.yml` | Manual dispatch | Promote components: dev → integration (export → import → copy) |
 
 ### Outer Loop (Build, Release, Deploy)
 

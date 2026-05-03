@@ -63,5 +63,5 @@ Versions use date-based format: `YYYY.MM.DD.N` (e.g. `2026.05.02.1`). The `Get-N
 | Sync solution from environment | `"sync the solution from dev"` |
 | Start a new feature | `"start feature for AB1234"` |
 | Deploy feature to dev-test | `"deploy to dev-test"` |
-| Stage feature to integration | `"stage feature AB1234"` |
+| Promote feature to integration | `"promote feature AB1234"` |
 | Cut a release | `"create a release"` |
