@@ -30,6 +30,7 @@ applyTo: ".github/workflows/**"
 |----------|---------|---------|
 | `pr-validation.yml` | Pull request | Smart change detection → build/test only what changed |
 | `check-source-branch.yml` | Pull request (disabled) | Enforce: only `develop`/`hotfix/*` can merge to `main` |
+| `check-feature-solution-files.yml` | Pull request to `develop`/`main` | Block feature solution folders from entering `develop` or `main` |
 | `test-oidc-auth.yml` | Manual dispatch | Validate OIDC federated auth to a Dataverse environment |
 
 ## Workflow Dispatch Inputs
@@ -257,4 +258,5 @@ Per-environment GitHub variables:
 1. **Promotion runs locally** — run `Promote-Solution.ps1 -Phase All` then `Sync-Solution.ps1` to a sync branch, then open a PR to `develop`; the `promote-solution.yml` workflow is available but not required
 2. **Hook ContinueOnError = true** by default — hooks shouldn't stop the pipeline unless critical
 3. **`check-source-branch.yml`** is currently disabled — when enabled, enforces `main` ← `develop`/`hotfix/*` only
-4. **App tokens**: Sync and promote workflows use GitHub App tokens for git operations (not the default `GITHUB_TOKEN`)
+4. **`check-feature-solution-files.yml`** blocks any PR to `develop` or `main` that includes files under `src/solutions/<name>/` where `<name>` is not a `mainSolution` from `environment-config.json`. Feature solution source is a build artifact — only main solution sync PRs belong in `develop`.
+5. **App tokens**: Sync and promote workflows use GitHub App tokens for git operations (not the default `GITHUB_TOKEN`)
