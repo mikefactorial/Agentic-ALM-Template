@@ -36,26 +36,23 @@ else { Write-Host "All required tools found." -ForegroundColor Green }
 
 Also check `gh auth status`. If not authenticated, run `gh auth login`.
 
-## Step 3: Install or Update the ALM Skills Plugin
+## Step 3: Install Agent Skill Plugins (Recommended, Not Required)
 
-The `power-platform-alm` plugin is recommended by this workspace. VS Code should show a notification — click **Install** if it appears.
+Two plugins are available that let you automate ALM tasks in plain English. They are **recommended but not required** — all CI/CD workflows and scripts work without them, and some organizations may not permit plugin installation. Skip this step if that applies.
 
-If the plugin is already installed, it may be out of date. Run this command first to force-refresh all installed plugins to their latest versions:
+### Plugin 1 — Power Platform ALM skills (`power-platform-alm`)
 
-**Command Palette (`Ctrl+Shift+P`) → `Chat: Update Plugins (Force)`**
+If already installed, update first: **Command Palette (`Ctrl+Shift+P`) → `Chat: Update Plugins (Force)`**
 
-If no notification appears and the plugin is not yet installed:
+To install:
+- Extensions sidebar (`Ctrl+Shift+X`) → search `@agentPlugins power-platform-alm` → Install
+- Or: Command Palette → `Chat: Install Plugin From Source` → `https://github.com/mikefactorial/Agentic-ALM-Workflows`
 
-**Option A — Extensions sidebar:**
-1. Open Extensions (`Ctrl+Shift+X`)
-2. Search `@agentPlugins power-platform-alm`
-3. Click Install
+### Plugin 2 — Dataverse skills (`dataverse`)
 
-**Option B — Command Palette:**
-1. `Ctrl+Shift+P` → `Chat: Install Plugin From Source`
-2. Enter `https://github.com/mikefactorial/Agentic-ALM-Workflows`
-
-Wait for the user to confirm the plugin is installed (or updated) before continuing.
+To install:
+- Extensions sidebar (`Ctrl+Shift+X`) → search `@agentPlugins dataverse` → Install
+- Or: Command Palette → `Chat: Install Plugin From Source` → `https://github.com/microsoft/Dataverse-skills`
 
 ## Step 4: Run Setup
 

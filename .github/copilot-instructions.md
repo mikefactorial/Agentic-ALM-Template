@@ -35,27 +35,29 @@ else { Write-Host "All required tools found." -ForegroundColor Green }
 
 Also verify `gh` is authenticated (`gh auth status`). If not, run `gh auth login`.
 
-### Step 3 — Install or update the ALM skills plugin
+### Step 3 — Recommend agent skill plugins (optional)
 
-**STOP. Do not proceed past this step until you have explicitly confirmed the plugin is installed and up to date.**
+Let the user know two plugins are available that automate ALM tasks via plain-English instructions. These are **recommended but not required** — the workflows, scripts, and CI/CD all work without them, and some organizations may not allow plugin installation.
 
-Ask the user directly:
+Suggest installing if the user is able to:
 
-> "Before we continue, I need to confirm the `power-platform-alm` plugin is installed and up to date in your VS Code. If the plugin is already installed, run **`Chat: Update Plugins (Force)`** from the Command Palette (`Ctrl+Shift+P`) to pull the latest version. If it is not yet installed, run **`Chat: Install Plugin From Source`** and enter `https://github.com/mikefactorial/Agentic-ALM-Workflows`. Can you confirm it's installed and up to date?"
+> "Two optional plugins are available that let you describe ALM tasks in plain English instead of running scripts manually:
+> 1. **`power-platform-alm`** — start features, sync solutions, deploy, promote, release. Install from Source: `https://github.com/mikefactorial/Agentic-ALM-Workflows`
+> 2. **`dataverse`** — query, create, and manage Dataverse data and metadata. Install from Source: `https://github.com/microsoft/Dataverse-skills`
+>
+> To install: Extensions sidebar (`Ctrl+Shift+X`) → search `@agentPlugins power-platform-alm` or `@agentPlugins dataverse`. Or Command Palette → `Chat: Install Plugin From Source`.
+> If already installed, run `Chat: Update Plugins (Force)` to get the latest versions.
+> Skip this step if plugins are not permitted in your organization."
 
-Wait for an explicit confirmation before proceeding. Do **not** assume the plugin is already installed because `.platform` or other prerequisites are in place — those are independent checks.
+Do not block setup on plugin installation. Proceed to Step 4 regardless.
 
-If VS Code shows a notification for `power-platform-alm`, the user can click **Install** there. Or from the Extensions sidebar (`Ctrl+Shift+X`), search `@agentPlugins power-platform-alm`.
+### Step 4 — Hand off to setup
 
-> **Why update matters**: the plugin caches skill files locally. If the plugin was installed in a previous session, it may have stale skills that are missing recent fixes. Use **`Chat: Update Plugins (Force)`** (Command Palette) to refresh all installed plugins to their latest version. Use `Chat: Install Plugin From Source` only if the plugin has never been installed.
+Say:
 
-### Step 4 — Hand off to the setup skill
+> "Say **'set up this repo'** and I'll walk you through filling in environment-config.json, wiring GitHub environments and secrets, OIDC credentials, and branch protection."
 
-Once the user confirms the plugin is installed/updated, say:
-
-> "Great — the plugin is ready. Say **'set up this repo'** and the setup skill will walk you through the rest — filling in environment-config.json, wiring GitHub environments and secrets, OIDC credentials, and branch protection."
-
-**HARD STOP — if the user has not confirmed the plugin is installed and up to date, do not proceed with any setup questions. Do not run setup inline. Redirect them to Step 3.**
+If the `power-platform-alm` plugin is installed, the `setup-client-repo` skill will handle this automatically. If not, proceed inline using the steps in SETUP.md.
 
 ---
 
@@ -92,14 +94,17 @@ All skill script references use `.platform/.github/workflows/scripts/`. If `.pla
 
 ## Agent Skills (Plugin)
 
-ALM skills (start-feature, scaffold-plugin, deploy-solution, etc.) ship as the `power-platform-alm` plugin from `Agentic-ALM-Workflows`. Skills cover the full inner and outer loop.
+ALM skills (start-feature, scaffold-plugin, deploy-solution, etc.) ship as the `power-platform-alm` plugin from `Agentic-ALM-Workflows`. Skills cover the full inner and outer loop. **These are recommended but not required** — all CI/CD workflows and scripts work without them.
 
 **Install for GitHub Copilot (VS Code):**
-- VS Code will suggest it automatically (workspace recommendation) — click **Install** in the notification
-- Or: Extensions view (`Ctrl+Shift+X`) → search `@agentPlugins power-platform-alm` → Install
+- Extensions view (`Ctrl+Shift+X`) → search `@agentPlugins power-platform-alm` → Install
 - Or: Command Palette → `Chat: Install Plugin From Source` → `https://github.com/mikefactorial/Agentic-ALM-Workflows`
 
-**Already installed? Update to latest:**
+Also install the **Dataverse skills** plugin for metadata, data, query, and solution operations:
+- Extensions view (`Ctrl+Shift+X`) → search `@agentPlugins dataverse` → Install
+- Or: Command Palette → `Chat: Install Plugin From Source` → `https://github.com/microsoft/Dataverse-skills`
+
+**Already installed? Update both to latest:**
 - Command Palette → `Chat: Update Plugins (Force)`
 
 **Install for Claude Code (once `.platform` is initialized):**

@@ -37,13 +37,21 @@ Write-Host "  .platform -> $platformHead (Agentic-ALM-Workflows)" -ForegroundCol
 
 # ── Step 2: Plugin install / update instructions ──────────────────────────────
 Write-Host ""
-Write-Host "Step 2: Install or update the ALM skills plugin" -ForegroundColor Cyan
+Write-Host "Step 2: Agent skill plugins (recommended, not required)" -ForegroundColor Cyan
+Write-Host "  These plugins let you run ALM tasks in plain English. Skip if plugins are not permitted." -ForegroundColor Gray
 Write-Host ""
-Write-Host "  GitHub Copilot (VS Code):" -ForegroundColor Yellow
-Write-Host "    VS Code should show a notification — click Install."
-Write-Host "    Or: Extensions sidebar (Ctrl+Shift+X) → search '@agentPlugins power-platform-alm' → Install"
+Write-Host "  Plugin 1 — Power Platform ALM skills (power-platform-alm):" -ForegroundColor Yellow
+Write-Host "    Extensions sidebar (Ctrl+Shift+X) → search '@agentPlugins power-platform-alm' → Install"
 Write-Host "    Or: Command Palette (Ctrl+Shift+P) → 'Chat: Install Plugin From Source'"
 Write-Host "        Enter: https://github.com/mikefactorial/Agentic-ALM-Workflows"
+Write-Host ""
+Write-Host "  Plugin 2 — Dataverse skills (dataverse):" -ForegroundColor Yellow
+Write-Host "    Extensions sidebar (Ctrl+Shift+X) → search '@agentPlugins dataverse' → Install"
+Write-Host "    Or: Command Palette (Ctrl+Shift+P) → 'Chat: Install Plugin From Source'"
+Write-Host "        Enter: https://github.com/microsoft/Dataverse-skills"
+Write-Host ""
+Write-Host "  Already installed? Update both to latest:" -ForegroundColor Yellow
+Write-Host "    Command Palette (Ctrl+Shift+P) → 'Chat: Update Plugins (Force)'"
 Write-Host ""
 Write-Host "  Claude Code (reads from .platform directly — no reinstall needed):" -ForegroundColor Yellow
 Write-Host "    claude --plugin-dir .platform/.github/plugins/power-platform-alm"
