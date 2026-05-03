@@ -10,98 +10,10 @@ on:
 
 permissions:
   contents: read
-  pull-requests: write
 
 jobs:
-  check-feature-solution-files:
-    name: Block feature solution files from develop/main
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Read allowed solution names from environment-config.json
-        id: config
-        run: |
-          CONFIG="deployments/settings/environment-config.json"
-          if [ ! -f "$CONFIG" ]; then
-            echo "❌ environment-config.json not found at $CONFIG"
-            exit 1
-          fi
-          # Extract all mainSolution values as a newline-separated list
-          MAIN_SOLUTIONS=$(jq -r '.solutionAreas[].mainSolution' "$CONFIG")
-          echo "Allowed main solutions:"
-          echo "$MAIN_SOLUTIONS"
-          # Store as space-separated for use in next step
-          MAIN_SOLUTIONS_ONELINE=$(echo "$MAIN_SOLUTIONS" | tr '\n' ' ' | sed 's/ $//')
-          echo "main_solutions=$MAIN_SOLUTIONS_ONELINE" >> "$GITHUB_OUTPUT"
-
-      - name: Check PR diff for feature solution files
-        run: |
-          BASE_REF="${{ github.event.pull_request.base.ref }}"
-          HEAD_REF="${{ github.event.pull_request.head.ref }}"
-          MAIN_SOLUTIONS="${{ steps.config.outputs.main_solutions }}"
-
-          echo "PR: $HEAD_REF → $BASE_REF"
-          echo "Allowed solutions: $MAIN_SOLUTIONS"
-          echo ""
-
-          # Get all changed files in this PR
-          git fetch origin "$BASE_REF" --depth=1
-          CHANGED_FILES=$(git diff --name-only "origin/$BASE_REF"..."${{ github.sha }}")
-
-          echo "Changed files:"
-          echo "$CHANGED_FILES"
-          echo ""
-
-          # Find any src/solutions/<name>/ paths
-          SOLUTION_FILES=$(echo "$CHANGED_FILES" | grep -E '^src/solutions/[^/]+/' || true)
-
-          if [ -z "$SOLUTION_FILES" ]; then
-            echo "✅ No files under src/solutions/ in this PR."
-            exit 0
-          fi
-
-          # Extract unique solution folder names from changed paths
-          CHANGED_SOLUTIONS=$(echo "$SOLUTION_FILES" | sed 's|^src/solutions/\([^/]*\)/.*|\1|' | sort -u)
-          echo "Solution folders touched: $CHANGED_SOLUTIONS"
-          echo ""
-
-          # Check each changed solution against the allowed list
-          VIOLATIONS=""
-          for SOL in $CHANGED_SOLUTIONS; do
-            ALLOWED=false
-            for MAIN in $MAIN_SOLUTIONS; do
-              if [ "$SOL" = "$MAIN" ]; then
-                ALLOWED=true
-                break
-              fi
-            done
-            if [ "$ALLOWED" = "false" ]; then
-              VIOLATIONS="$VIOLATIONS $SOL"
-            fi
-          done
-
-          if [ -z "$VIOLATIONS" ]; then
-            echo "✅ All solution files in this PR belong to a main solution."
-            exit 0
-          fi
-
-          echo "❌ ERROR: This PR includes files from feature solution(s):$VIOLATIONS"
-          echo ""
-          echo "Feature solution source files must not be merged into develop or main."
-          echo "They are build artifacts used only on the feature branch for dev-test deployment."
-          echo ""
-          echo "How to fix:"
-          echo "  1. Remove the feature solution folder(s) from this branch:"
-          for SOL in $VIOLATIONS; do
-            echo "       git rm -r src/solutions/$SOL/"
-            echo "       git rm -f deployments/settings/templates/${SOL}_template.json 2>/dev/null || true"
-          done
-          echo "  2. Commit and push the cleanup to this branch."
-          echo "  3. Only code-first changes (plugins, PCF controls, deployment config)"
-          echo "     belong in a PR to develop. The main solution sync is handled via"
-          echo "     a separate promote/sync PR, not this feature branch PR."
-          exit 1
+  check:
+    uses: mikefactorial/Agentic-ALM-Workflows/.github/workflows/check-feature-solution-files.yml@main
+    with:
+      base_ref: ${{ github.event.pull_request.base.ref }}
+      head_sha: ${{ github.sha }}
