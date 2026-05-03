@@ -21,6 +21,7 @@ The template provides:
 
 | Area | README |
 |------|--------|
+| **Feature lifecycle cheat sheet (start → release)** | **[DEVELOPER-GUIDE.md](DEVELOPER-GUIDE.md)** |
 | Solution metadata and the inner ALM loop | [src/solutions/README.md](src/solutions/README.md) |
 | Plugin development and registration | [src/plugins/README.md](src/plugins/README.md) |
 | PCF control development | [src/controls/README.md](src/controls/README.md) |
