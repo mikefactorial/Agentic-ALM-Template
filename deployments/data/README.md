@@ -53,4 +53,3 @@ If no schema exists yet for a solution, use the Configuration Migration Tool (CM
 | Set up config data for a solution | `"set up config data for the AcmePlatform solution"` |
 | Export records from dev | `"export config data from dev"` |
 | Import data into an environment | `"import config data to dev-test"` |
-

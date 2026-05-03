@@ -3,8 +3,7 @@ run-name: 'PR #${{ github.event.pull_request.number }}: ${{ github.event.pull_re
 
 on:
   pull_request:
-    types: [opened, synchronize, reopened]
-    
+    types: [opened, synchronize, reopened, ready_for_review]
 
 permissions:
   contents: read
