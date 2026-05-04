@@ -13,82 +13,12 @@ on:
         type: string
 
 permissions:
-  id-token: write   # Required for OIDC token generation
+  id-token: write
   contents: read
 
 jobs:
   test-authentication:
-    runs-on: ubuntu-latest
-    environment: ${{ inputs.environment }}
-    
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-      
-      - name: Display workflow context
-        run: |
-          echo "Testing OIDC authentication for GitHub Server"
-          echo "=========================================="
-          echo "Environment: ${{ inputs.environment }}"
-          echo "Repository: ${{ github.repository }}"
-          echo "Repository Owner: ${{ github.repository_owner }}"
-          echo "GitHub Server URL: ${{ github.server_url }}"
-          echo "=========================================="
-             
-      - name: Test Power Platform CLI Access
-        run: |
-          echo "Installing Power Platform CLI via dotnet tool..."
-          dotnet tool install --global Microsoft.PowerApps.CLI.Tool
-          
-          echo ""
-          echo "Verifying pac CLI installation..."
-          pac help
-          
-          echo ""
-          echo "✓ Power Platform CLI is ready!"
-      
-      - name: Test Client Libraries (Dataverse API & Power Platform CLI)
-        shell: pwsh
-        run: |
-          .\.github\workflows\tests\Test-Clients.ps1 `
-            -EnvironmentUrl ${{ vars.DATAVERSE_URL }} `
-            -TenantId ${{ vars.AZURE_TENANT_ID }} `
-            -ClientId ${{ vars.DATAVERSE_CLIENT_ID }} `
-            -TestDataverseApi `
-            -TestPowerPlatformCli
-      
-      - name: Authentication Test Summary
-        if: success()
-        run: |
-          echo ""
-          echo "=========================================="
-          echo "✓ OIDC Authentication Test: SUCCESS"
-          echo "=========================================="
-          echo ""
-          echo "Validated:"
-          echo "  ✓ GitHub Server OIDC token generation"
-          echo "  ✓ Azure federated credential validation"
-          echo "  ✓ Power Platform CLI installation"
-          echo "  ✓ DataverseApiClient class with OIDC authentication"
-          echo "  ✓ PowerPlatformClient class with OIDC authentication"
-          echo "  ✓ Dataverse Web API queries and operations"
-          echo "  ✓ Power Platform CLI commands and operations"
-          echo ""
-          echo "Your GitHub federated credentials are configured correctly!"
-      
-      - name: Authentication Test Failed
-        if: failure()
-        run: |
-          echo ""
-          echo "=========================================="
-          echo "✗ OIDC Authentication Test: FAILED"
-          echo "=========================================="
-          echo ""
-          echo "Common issues to check:"
-          echo "  1. GitHub secrets (AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_SUBSCRIPTION_ID) are set"
-          echo "  2. GitHub environment '${{ inputs.environment }}' exists"
-          echo "  3. Federated credential subject matches: repo:${{ github.repository }}:environment:${{ inputs.environment }}"
-          echo "  4. Federated credential issuer format: https://token.actions.<your-ghe-hostname>"
-          echo "  5. App Registration has federated credential configured"
-          echo ""
-          exit 1
+    uses: mikefactorial/Agentic-ALM-Workflows/.github/workflows/test-oidc-auth.yml@main
+    with:
+      environment: ${{ inputs.environment }}
+    secrets: inherit
