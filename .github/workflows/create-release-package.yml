@@ -46,7 +46,26 @@ permissions:
   actions: read
 
 jobs:
+  check-configured:
+    name: Check repo is configured
+    runs-on: ubuntu-latest
+    outputs:
+      ready: ${{ steps.check.outputs.ready }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Detect unreplaced placeholders
+        id: check
+        run: |
+          if grep -q '{{' deployments/settings/environment-config.json; then
+            echo "⚠️ environment-config.json still contains {{PLACEHOLDER}} values — skipping release build until setup is complete."
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+          fi
+
   call-workflow:
+    needs: check-configured
+    if: needs.check-configured.outputs.ready == 'true'
     uses: mikefactorial/Agentic-ALM-Workflows/.github/workflows/create-release-package.yml@main
     with:
       package_version: ${{ inputs.package_version || '' }}
