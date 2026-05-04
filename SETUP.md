@@ -71,7 +71,6 @@ Each deployment target environment needs these variables set in **GitHub Environ
 
 | Variable | Description | Example |
 |----------|-------------|---------|
-| `DEPLOYMENT_ENVIRONMENTS` | Comma-separated default deploy targets for `workflow_run` trigger | `acme-test` |
 | `PR_VALIDATION_INTEGRATION_ENV` | Integration environment slug for PR validation builds | `acme-integration` |
 
 ---
