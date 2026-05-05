@@ -224,6 +224,9 @@ PublishScripts/
 
 # NuGet Packages
 *.nupkg
+# Exception: plugin package .nupkg files are part of the Dataverse solution source
+# and must be committed so pac solution pack can include them in the build.
+!src/solutions/**/*.nupkg
 # NuGet Symbol Packages
 *.snupkg
 # The packages folder can be ignored because of Package Restore
