@@ -82,3 +82,7 @@ Scripts and reusable jobs live in Agentic-ALM-Workflows.
 | `create-release-package.yml` | Push to `main` / manual | Build release packages + create GitHub Release |
 | `pr-validation.yml` | Pull request | Build and validate changed components |
 | `check-source-branch.yml` | Pull request | Enforce branch policies |
+
+## Credits
+
+- [AlbanianXrm.CDSProj.Sdk](https://github.com/AlbanianXrm/CDSProj.Sdk) — SDK-style MSBuild project support for Dataverse solution projects including plugin packages and managed identities (`.cdsproj`)
