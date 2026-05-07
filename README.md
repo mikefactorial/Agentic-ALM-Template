@@ -8,7 +8,7 @@
 
 ## About This Template
 
-This repository was created from [Agentic-ALM-Template](https://github.com/mikefactorial/Agentic-ALM-Template) — a production-ready starting point for enterprise Power Platform ALM using GitHub Actions and GitHub Copilot agent skills.
+This repository contains a moderately opinionated implementation of ALM for Power Platform and GitHub using workflows and Copilot agent skills. It's intended to be a starting point for Power Platform projects that use code-first components in the platform and want to leverage agentic workflows for development and ensure those agents follow best practices for ALM and development.
 
 The template provides:
 - **Agentic setup and development** — a GitHub Copilot plugin (`power-platform-alm`) with skills that automate the full ALM lifecycle in plain English: start features, sync solutions, deploy, promote, release
