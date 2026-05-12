@@ -28,9 +28,22 @@
     { "slug": "{{ENV_PREFIX}}-integration", "url": "{{INTEGRATION_ENV_URL}}" }
   ],
   "environments": [
-    { "slug": "{{ENV_PREFIX}}-dev-test", "url": "{{DEV_TEST_ENV_URL}}" },
-    { "slug": "{{ENV_PREFIX}}-test",     "url": "{{TEST_ENV_URL}}" },
-    { "slug": "{{ENV_PREFIX}}-prod",     "url": "{{PROD_ENV_URL}}" }
+    {
+      "slug": "{{ENV_PREFIX}}-dev-test",
+      "url": "{{DEV_TEST_ENV_URL}}",
+      "$comment_organizationSettings": "Optional. Dataverse Organization entity logical names → values. Applied by EnvironmentSettingsService during package deploy. Examples: isauditenabled, allowuseremailchange, isenvironmentallyresponsible. Omit or leave as {} if no org-level settings are needed for this environment.",
+      "organizationSettings": {}
+    },
+    {
+      "slug": "{{ENV_PREFIX}}-test",
+      "url": "{{TEST_ENV_URL}}",
+      "organizationSettings": {}
+    },
+    {
+      "slug": "{{ENV_PREFIX}}-prod",
+      "url": "{{PROD_ENV_URL}}",
+      "organizationSettings": {}
+    }
   ],
   "packageGroups": [
     {

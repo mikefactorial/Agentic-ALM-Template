@@ -152,6 +152,27 @@ For solutions that include a managed identity (plugins using `ManagedIdentitySer
 - **`perEnvironment`** — one entry per environment slug in `packageGroups[].environments`. Each entry has `applicationId` (Azure AD app registration client ID) and `tenantId` for that environment's identity.
 
 Omit the `managedIdentities` key entirely (or leave it as `[]`) for package groups that have no managed identity components.
+
+#### organizationSettings (optional, per environment)
+
+To configure Dataverse Organization entity attributes during deployment — enabling features, changing environment-level settings, etc. — add `organizationSettings` to individual entries in `environments[]`. These are applied by `EnvironmentSettingsService` before solution import.
+
+```json
+{
+  "slug": "{envPrefix}-prod",
+  "url": "https://...",
+  "organizationSettings": {
+    "isauditenabled": "true",
+    "allowuseremailchange": "false",
+    "isenvironmentallyresponsible": "true"
+  }
+}
+```
+
+- Keys are **Dataverse Organization entity logical names** (lowercase). Look them up via: `pac org who` to find the org GUID, then query the `organization` table in XrmToolBox or the Metadata Browser.
+- Values are always strings — the Package Deployer uses attribute metadata to convert to the correct type (bool, int, etc.) before writing.
+- Omit `organizationSettings` or leave it as `{}` for environments where no org-level settings need to be applied.
+- Settings are applied in `InitializeCustomExtension()` (before solution import), so solutions can depend on the setting being in place.
 ```
 
 ### Build Merge Process
