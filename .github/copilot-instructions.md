@@ -241,3 +241,4 @@ pac auth select --index <n>
 8. **Promotion runs locally** — `Promote-Solution.ps1` + `Sync-Solution.ps1` locally, then open a sync PR to `develop`
 9. **dotnet build for inner loop** — `Build-Solutions.ps1` is outer-loop/CI only
 10. **Always sync before deploying to dev-test** — never assume a feature is code-first only
+11. **Never run `gh pr create` from a feature branch directly to `develop` or `main`** — feature branches contain `src/solutions/{featureSolution}/` and settings templates that must never enter `develop`. Always use `Create-FeatureCodePR.ps1` for code-first changes. The only PRs opened directly with `gh pr create` are: (a) the sync PR from a `sync/` branch after promote, and (b) hotfix PRs from `hotfix/` branches.
