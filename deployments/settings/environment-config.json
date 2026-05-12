@@ -31,7 +31,7 @@
     {
       "slug": "{{ENV_PREFIX}}-dev-test",
       "url": "{{DEV_TEST_ENV_URL}}",
-      "$comment_organizationSettings": "Optional. Dataverse Organization entity logical names → values. Applied by EnvironmentSettingsService during package deploy. Examples: isauditenabled, allowuseremailchange, isenvironmentallyresponsible. Omit or leave as {} if no org-level settings are needed for this environment.",
+      "$comment_organizationSettings": "Optional. Dataverse Organization entity logical names → values. Applied by EnvironmentSettingsService during package deploy before solution import. Keys are lowercase logical names from the Dataverse 'organization' table (find them via XrmToolBox Metadata Browser or by querying /api/data/v9.2/organizations). Values are always strings — the service reads attribute metadata and converts to the correct type (bool, int, etc.) before writing. Example populated entry: { \"isauditenabled\": \"true\", \"allowuseremailchange\": \"false\", \"isenvironmentallyresponsible\": \"true\" }. Omit or leave as {} if no org-level settings are needed.",
       "organizationSettings": {}
     },
     {
