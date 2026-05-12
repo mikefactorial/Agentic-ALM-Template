@@ -4,6 +4,34 @@ applyTo: "src/solutions/**"
 
 # Dataverse Solution Metadata
 
+## Naming Conventions
+
+Apply these rules whenever creating or naming **any** Dataverse component — tables, columns, choices, relationships, custom APIs, environment variables, etc.
+
+| Element | Display Name | Schema / Logical Name |
+|---------|-------------|----------------------|
+| Table | Title Case with spaces: `Signal Transcript`, `Project Budget` | `{prefix}_SignalTranscript` (PascalCase, no spaces) |
+| Column | Title Case with spaces: `Suggested Priority`, `Signal Source` | `{prefix}_suggestedpriority` (all lowercase, no spaces) |
+| Choice (global) | Title Case with spaces: `Case Category` | `{prefix}_CaseCategory` |
+| Choice value label | Title Case: `High Priority`, `In Progress` | N/A |
+| Relationship | N/A | `{prefix}_TableA_TableB` |
+| Custom API | Title Case with spaces | `{prefix}_ActionName` |
+
+**Display Name rules:**
+- Always Title Case: capitalize the first letter of every word
+- Always include spaces between words — never concatenated (`suggestedpriority` → `Suggested Priority`)
+- Use natural English: `Signal Transcript`, not `SignalTranscript` or `signal transcript`
+- Plural display name for tables: auto-append `s` unless the plural is irregular (use `Signal Transcripts`, not `Signals Transcript`)
+
+**Schema / Logical Name rules:**
+- Always prefixed with the publisher prefix from `environment-config.json` → `publisher` field
+- Schema names: PascalCase (`{prefix}_ProjectBudget`)
+- Logical names: all lowercase (`{prefix}_projectbudget`) — Dataverse lowercases automatically
+- No spaces, hyphens, or special characters — only alphanumeric and underscores
+- Never use an `Id` suffix on a regular column — Dataverse auto-generates `{logicalName}Id` for lookup navigation properties, causing a collision
+
+**Before creating any component:** confirm the publisher prefix from `deployments/settings/environment-config.json` → `publisher`. Never invent or hardcode a prefix.
+
 ## Solution Layout
 
 Solutions live under `src/solutions/`, each with a `.cdsproj` and `src/` directory. The solution list is defined in `solutionAreas[]` in `deployments/settings/environment-config.json`.
