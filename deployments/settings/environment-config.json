@@ -37,7 +37,9 @@
       "name": "{{SOLUTION_NAME}}",
       "solutions": ["{{SOLUTION_PREFIX}}_{{SOLUTION_NAME}}"],
       "dataSolution": "{{SOLUTION_PREFIX}}_{{SOLUTION_NAME}}",
-      "environments": ["{{ENV_PREFIX}}-dev-test", "{{ENV_PREFIX}}-test", "{{ENV_PREFIX}}-prod"]
+      "environments": ["{{ENV_PREFIX}}-dev-test", "{{ENV_PREFIX}}-test", "{{ENV_PREFIX}}-prod"],
+      "$comment_managedIdentities": "Optional. Add one entry per managed identity in this package. 'name' must match the <name> element in customizations.xml (find it in src/solutions/{solution}/ManagedIdentities/{name}/managedidentity.xml or via pac managed-identity get). 'solutionName' is the solution unique name containing the MI. 'perEnvironment' maps each deployment environment slug to its Azure AD applicationId and tenantId.",
+      "managedIdentities": []
     }
   ]
 }

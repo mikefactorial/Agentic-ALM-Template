@@ -118,6 +118,40 @@ Variable schema names use the solution prefix (e.g., `{solutionPrefix}_VariableN
 ### environment-config.json
 
 Defines all deployment environments and package groups. Read from `environment-config.json` at runtime — do not hardcode environment counts or package group names in scripts or instructions.
+
+#### managedIdentities (optional, per package group)
+
+For solutions that include a managed identity (plugins using `ManagedIdentityService.AcquireToken`), add entries to `packageGroups[].managedIdentities`. Deploy-Package.ps1 uses this to patch `applicationId` and `tenantId` in `customizations.xml` inside the solution ZIP before import, so each environment gets the correct Azure AD app registration — without having to re-export the solution per environment.
+
+```json
+"managedIdentities": [
+  {
+    "name": "MyPlugin Identity",
+    "$comment_name": "Must match the <name> element in customizations.xml. Find it in src/solutions/{solution}/ManagedIdentities/{name}/managedidentity.xml",
+    "solutionName": "{solutionPrefix}_{solutionName}",
+    "perEnvironment": {
+      "{envPrefix}-dev-test": {
+        "applicationId": "00000000-0000-0000-0000-000000000000",
+        "tenantId": "00000000-0000-0000-0000-000000000000"
+      },
+      "{envPrefix}-test": {
+        "applicationId": "00000000-0000-0000-0000-000000000000",
+        "tenantId": "00000000-0000-0000-0000-000000000000"
+      },
+      "{envPrefix}-prod": {
+        "applicationId": "00000000-0000-0000-0000-000000000000",
+        "tenantId": "00000000-0000-0000-0000-000000000000"
+      }
+    }
+  }
+]
+```
+
+- **`name`** — the managed identity's internal `name` field from Dataverse (not the display name). Look it up in `src/solutions/{solution}/ManagedIdentities/{name}/managedidentity.xml` → `<name>` element, or run `pac managed-identity get --component-type PluginPackage --component-id {guid}`.
+- **`solutionName`** — the unique name of the solution that contains this managed identity component (e.g., `pub_MySolution`).
+- **`perEnvironment`** — one entry per environment slug in `packageGroups[].environments`. Each entry has `applicationId` (Azure AD app registration client ID) and `tenantId` for that environment's identity.
+
+Omit the `managedIdentities` key entirely (or leave it as `[]`) for package groups that have no managed identity components.
 ```
 
 ### Build Merge Process
