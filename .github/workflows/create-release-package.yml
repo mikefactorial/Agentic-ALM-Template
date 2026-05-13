@@ -39,6 +39,11 @@ on:
         required: false
         type: boolean
         default: false
+      auto_deploy:
+        description: 'Automatically deploy to all configured environments after release is created. Environment approval gates in GitHub Settings control when each deployment proceeds.'
+        required: false
+        type: boolean
+        default: true
 
 permissions:
   contents: write
@@ -71,4 +76,93 @@ jobs:
       package_version: ${{ inputs.package_version || '' }}
       create_release: ${{ github.event_name == 'push' || inputs.create_release == true }}
       draft_release: ${{ inputs.draft_release == true }}
+    secrets: inherit
+
+  # ── Auto-deploy ──────────────────────────────────────────────────────────────
+  # After a release is created, automatically deploy to each environment defined
+  # in packageGroups[].environments in environment-config.json, in order.
+  #
+  # Gate each deployment with a GitHub environment protection rule:
+  #   Settings → Environments → <slug> → Required reviewers
+  # The workflow waits for approval before proceeding to that environment.
+  #
+  # Auto-deploy runs on push-to-main by default. On workflow_dispatch it is
+  # controlled by the auto_deploy input (default: true).
+  #
+  # Standard template supports up to 3 sequential deployment slots.
+  # To add a 4th: copy deploy-2, rename to deploy-3, set needs: [resolve-deployments, deploy-2].
+
+  resolve-deployments:
+    name: Resolve Deployment Targets
+    needs: [call-workflow]
+    if: |
+      needs.call-workflow.result == 'success' &&
+      needs.call-workflow.outputs.release_created == 'true' &&
+      (github.event_name == 'push' || inputs.auto_deploy == true)
+    runs-on: ubuntu-latest
+    outputs:
+      pair_0_pkg: ${{ steps.resolve.outputs.pair_0_pkg }}
+      pair_0_env: ${{ steps.resolve.outputs.pair_0_env }}
+      pair_1_pkg: ${{ steps.resolve.outputs.pair_1_pkg }}
+      pair_1_env: ${{ steps.resolve.outputs.pair_1_env }}
+      pair_2_pkg: ${{ steps.resolve.outputs.pair_2_pkg }}
+      pair_2_env: ${{ steps.resolve.outputs.pair_2_env }}
+      release_tag: ${{ needs.call-workflow.outputs.release_tag }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Resolve deployment pairs from environment-config.json
+        id: resolve
+        shell: pwsh
+        run: |
+          $config = Get-Content 'deployments/settings/environment-config.json' -Raw | ConvertFrom-Json
+          $pairs  = [System.Collections.Generic.List[PSCustomObject]]::new()
+          foreach ($group in $config.packageGroups) {
+            foreach ($env in $group.environments) {
+              $pairs.Add([PSCustomObject]@{ pkg = $group.name; env = $env })
+            }
+          }
+          $maxSlots = 3  # Matches the number of deploy-N jobs below
+          for ($i = 0; $i -lt $maxSlots; $i++) {
+            if ($i -lt $pairs.Count) {
+              "pair_${i}_pkg=$($pairs[$i].pkg)" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
+              "pair_${i}_env=$($pairs[$i].env)" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
+            } else {
+              "pair_${i}_pkg=" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
+              "pair_${i}_env=" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
+            }
+          }
+          Write-Host "Deployment order:"
+          $pairs | ForEach-Object { Write-Host "  $($_.pkg) → $($_.env)" }
+
+  deploy-0:
+    name: 'Auto Deploy — Slot 1'
+    needs: [resolve-deployments]
+    if: needs.resolve-deployments.outputs.pair_0_env != ''
+    uses: mikefactorial/Agentic-ALM-Workflows/.github/workflows/deploy-package.yml@main
+    with:
+      environment: ${{ needs.resolve-deployments.outputs.pair_0_env }}
+      package:     ${{ needs.resolve-deployments.outputs.pair_0_pkg }}
+      release_tag: ${{ needs.resolve-deployments.outputs.release_tag }}
+    secrets: inherit
+
+  deploy-1:
+    name: 'Auto Deploy — Slot 2'
+    needs: [resolve-deployments, deploy-0]
+    if: needs.resolve-deployments.outputs.pair_1_env != ''
+    uses: mikefactorial/Agentic-ALM-Workflows/.github/workflows/deploy-package.yml@main
+    with:
+      environment: ${{ needs.resolve-deployments.outputs.pair_1_env }}
+      package:     ${{ needs.resolve-deployments.outputs.pair_1_pkg }}
+      release_tag: ${{ needs.resolve-deployments.outputs.release_tag }}
+    secrets: inherit
+
+  deploy-2:
+    name: 'Auto Deploy — Slot 3'
+    needs: [resolve-deployments, deploy-1]
+    if: needs.resolve-deployments.outputs.pair_2_env != ''
+    uses: mikefactorial/Agentic-ALM-Workflows/.github/workflows/deploy-package.yml@main
+    with:
+      environment: ${{ needs.resolve-deployments.outputs.pair_2_env }}
+      package:     ${{ needs.resolve-deployments.outputs.pair_2_pkg }}
+      release_tag: ${{ needs.resolve-deployments.outputs.release_tag }}
     secrets: inherit
