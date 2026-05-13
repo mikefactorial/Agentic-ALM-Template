@@ -383,8 +383,20 @@ namespace PlatformPackage
 
                     PackageLog.Log($"Decoded JSON: {json}");
 
-                    // Deserialize JSON array to list of ManagedIdentityConfig
-                    var managedIdentities = JsonConvert.DeserializeObject<List<ManagedIdentityConfig>>(json);
+                    // Deserialize to list of ManagedIdentityConfig.
+                    // Defensively handle both array ([{...}]) and bare object ({...}) formats —
+                    // a PowerShell pipeline bug can emit a single object instead of an array.
+                    List<ManagedIdentityConfig> managedIdentities;
+                    if (json.TrimStart().StartsWith("["))
+                    {
+                        managedIdentities = JsonConvert.DeserializeObject<List<ManagedIdentityConfig>>(json);
+                    }
+                    else
+                    {
+                        PackageLog.Log("Warning: managed identity JSON is a bare object, not an array — wrapping for compatibility.");
+                        var single = JsonConvert.DeserializeObject<ManagedIdentityConfig>(json);
+                        managedIdentities = single != null ? new List<ManagedIdentityConfig> { single } : null;
+                    }
 
                     if (managedIdentities == null || managedIdentities.Count == 0)
                     {
