@@ -81,14 +81,24 @@ namespace PlatformPackage.Services
                 _traceLogger.Log("Loading customizations.xml");
                 XDocument customizationsDoc = XDocument.Load(customizationsPath);
 
-                // Find the managed identity element by name
+                // Find the managed identity element.
+                // Power Platform does not always write a <name> child element to customizations.xml —
+                // the identity may only be identifiable by its managedidentityid attribute (GUID).
+                // Try <name> element first; fall back to managedidentityid attribute so both lookup
+                // styles work: using the display name (if present) or the GUID.
                 var managedIdentityElement = customizationsDoc
                     .Descendants("managedidentities")
                     .Elements("managedidentity")
                     .FirstOrDefault(mi =>
                     {
                         var nameElement = mi.Element("name")?.Value;
-                        return nameElement != null && nameElement.Equals(managedIdentityName, StringComparison.OrdinalIgnoreCase);
+                        if (nameElement != null && nameElement.Equals(managedIdentityName, StringComparison.OrdinalIgnoreCase))
+                            return true;
+
+                        // Fall back to matching by managedidentityid attribute (GUID).
+                        var idAttr = mi.Attribute("managedidentityid")?.Value?.Trim('{', '}');
+                        var lookupId = managedIdentityName.Trim('{', '}');
+                        return idAttr != null && idAttr.Equals(lookupId, StringComparison.OrdinalIgnoreCase);
                     });
 
                 if (managedIdentityElement == null)

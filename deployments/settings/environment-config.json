@@ -56,7 +56,7 @@
       "solutions": ["{{SOLUTION_PREFIX}}_{{SOLUTION_NAME}}"],
       "dataSolution": "{{SOLUTION_PREFIX}}_{{SOLUTION_NAME}}",
       "environments": ["{{ENV_PREFIX}}-dev-test", "{{ENV_PREFIX}}-test", "{{ENV_PREFIX}}-prod"],
-      "$comment_managedIdentities": "Optional. Add one entry per managed identity in this package. 'name' must match the <name> element in customizations.xml (find it in src/solutions/{solution}/ManagedIdentities/{name}/managedidentity.xml or via pac managed-identity get). 'solutionName' is the solution unique name containing the MI. 'perEnvironment' maps each deployment environment slug to its Azure AD applicationId and tenantId.",
+      "$comment_managedIdentities": "Optional. Add one entry per managed identity in this package. 'name' must be the managedidentityid GUID from customizations.xml — Power Platform does not always write a <name> child element, so the GUID is the reliable lookup key. Find it in src/solutions/{solution}/ManagedIdentities/{folder}/managedidentity.xml (managedidentityid attribute) or via: pac managed-identity get --environment <url>. 'solutionName' is the solution unique name containing the MI. 'perEnvironment' maps each deployment environment slug to its Azure AD applicationId and tenantId.",
       "managedIdentities": []
     }
   ]
