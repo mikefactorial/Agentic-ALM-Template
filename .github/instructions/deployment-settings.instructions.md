@@ -118,61 +118,6 @@ Variable schema names use the solution prefix (e.g., `{solutionPrefix}_VariableN
 ### environment-config.json
 
 Defines all deployment environments and package groups. Read from `environment-config.json` at runtime — do not hardcode environment counts or package group names in scripts or instructions.
-
-#### managedIdentities (optional, per package group)
-
-For solutions that include a managed identity (plugins using `ManagedIdentityService.AcquireToken`), add entries to `packageGroups[].managedIdentities`. Deploy-Package.ps1 uses this to patch `applicationId` and `tenantId` in `customizations.xml` inside the solution ZIP before import, so each environment gets the correct Azure AD app registration — without having to re-export the solution per environment.
-
-```json
-"managedIdentities": [
-  {
-    "name": "MyPlugin Identity",
-    "$comment_name": "Must match the <name> element in customizations.xml. Find it in src/solutions/{solution}/ManagedIdentities/{name}/managedidentity.xml",
-    "solutionName": "{solutionPrefix}_{solutionName}",
-    "perEnvironment": {
-      "{envPrefix}-dev-test": {
-        "applicationId": "00000000-0000-0000-0000-000000000000",
-        "tenantId": "00000000-0000-0000-0000-000000000000"
-      },
-      "{envPrefix}-test": {
-        "applicationId": "00000000-0000-0000-0000-000000000000",
-        "tenantId": "00000000-0000-0000-0000-000000000000"
-      },
-      "{envPrefix}-prod": {
-        "applicationId": "00000000-0000-0000-0000-000000000000",
-        "tenantId": "00000000-0000-0000-0000-000000000000"
-      }
-    }
-  }
-]
-```
-
-- **`name`** — the managed identity's internal `name` field from Dataverse (not the display name). Look it up in `src/solutions/{solution}/ManagedIdentities/{name}/managedidentity.xml` → `<name>` element, or run `pac managed-identity get --component-type PluginPackage --component-id {guid}`.
-- **`solutionName`** — the unique name of the solution that contains this managed identity component (e.g., `pub_MySolution`).
-- **`perEnvironment`** — one entry per environment slug in `packageGroups[].environments`. Each entry has `applicationId` (Azure AD app registration client ID) and `tenantId` for that environment's identity.
-
-Omit the `managedIdentities` key entirely (or leave it as `[]`) for package groups that have no managed identity components.
-
-#### organizationSettings (optional, per environment)
-
-To configure Dataverse Organization entity attributes during deployment — enabling features, changing environment-level settings, etc. — add `organizationSettings` to individual entries in `environments[]`. These are applied by `EnvironmentSettingsService` before solution import.
-
-```json
-{
-  "slug": "{envPrefix}-prod",
-  "url": "https://...",
-  "organizationSettings": {
-    "isauditenabled": "true",
-    "allowuseremailchange": "false",
-    "isenvironmentallyresponsible": "true"
-  }
-}
-```
-
-- Keys are **Dataverse Organization entity logical names** (lowercase). Look them up via: `pac org who` to find the org GUID, then query the `organization` table in XrmToolBox or the Metadata Browser.
-- Values are always strings — the Package Deployer uses attribute metadata to convert to the correct type (bool, int, etc.) before writing.
-- Omit `organizationSettings` or leave it as `{}` for environments where no org-level settings need to be applied.
-- Settings are applied in `InitializeCustomExtension()` (before solution import), so solutions can depend on the setting being in place.
 ```
 
 ### Build Merge Process
@@ -241,21 +186,78 @@ Reference and lookup data (e.g., test method codes, report templates, instrument
 
 ```
 deployments/data/{solution}/
-├── ConfigData.xml              # Root manifest
+├── ConfigData.xml              # Schema definition — defines entities/fields to export
 └── config-data/
     ├── data.xml                # Record data
-    ├── data_schema.xml         # Schema definition
-    └── [Content_Types].xml     # Content type metadata
+    ├── data_schema.xml         # Schema output from pac data export (mirrors ConfigData.xml format)
+    └── [Content_Types].xml     # REQUIRED — CMT importer validates this file exists in the zip
 ```
+
+### Strict File Format Rules
+
+The Configuration Migration Tool (CMT) importer inside Package Deployer is format-strict. Violating any rule below causes a **"compressed (.zip) file is invalid"** error at deployment time even though the zip is structurally valid.
+
+#### `[Content_Types].xml` — REQUIRED
+
+**Must be present** in `config-data/`. The CMT SDK validates its existence. Create it once and commit it; never delete it.
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">
+  <Default Extension="xml" ContentType="application/xml" />
+</Types>
+```
+
+#### `data_schema.xml` — schema file, no comments
+
+Must exactly match the `ConfigData.xml` entity/field structure. **Do not add XML comments** (`<!-- ... -->`) to `data_schema.xml` — the CMT schema parser rejects them. `ConfigData.xml` may have comments for human documentation; `data_schema.xml` must be comment-free.
+
+Minimal valid `data_schema.xml`:
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<entities>
+  <entity name="{prefix}_{entityname}" displayname="{Display Name}" etc="{etc}"
+          primaryidfield="{prefix}_{entityname}id" primarynamefield="{prefix}_name" disableplugins="true">
+    <fields>
+      <field displayname="{Display Name}" name="{prefix}_{entityname}id" type="guid" primaryKey="true" />
+      <field displayname="Name"           name="{prefix}_name"           type="string" customfield="true" />
+      <field displayname="Status"         name="statecode"               type="state" />
+      <field displayname="Status Reason"  name="statuscode"              type="status" />
+    </fields>
+    <relationships/>
+  </entity>
+</entities>
+```
+
+#### `data.xml` — no leading whitespace before root element
+
+**Must not start with a blank line or CRLF** before the root `<entities>` tag. The CMT parser is strict about this. When hand-crafting or editing `data.xml`, ensure the first character of the file is `<`.
+
+Correct:
+```xml
+<entities xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          timestamp="2026-01-01T00:00:00.0000000Z">
+```
+
+Wrong (CMT will reject):
+```
+↵
+<entities ...>
+```
+
+> **When `pac data export` is used** it produces all three files correctly. Errors occur when files are hand-crafted or copied from another schema. Always validate locally with `pac data import` against the dev environment before committing.
 
 ### Export Data
 
 ```powershell
 pac data export `
     --environment https://your-env.crm.dynamics.com/ `
-    --schemaFile deployments/data/{solutionPrefix}_{solutionName}/config-data/data_schema.xml `
+    --schemaFile deployments/data/{solutionPrefix}_{solutionName}/ConfigData.xml `
     --dataFile deployments/data/{solutionPrefix}_{solutionName}/config-data/data.xml
 ```
+
+After export, `pac data export` writes `data.xml` and `data_schema.xml` into the `config-data/` folder. Verify `[Content_Types].xml` is also present — it is not generated by `pac data export` and must be committed separately.
 
 ### Import Data
 
@@ -298,11 +300,13 @@ pac data import `
 
 1. Export from source environment:
    ```powershell
-   pac data export --environment <url> --schemaFile <schema> --dataFile <data>
+   pac data export --environment <url> --schemaFile deployments/data/{solution}/ConfigData.xml --dataFile deployments/data/{solution}/config-data/data.xml
    ```
-2. Place files under `deployments/data/{solution}/config-data/`
-3. Test locally: `pac data import --environment <url> --data <folder>`
-4. Commit alongside solution changes
+2. Verify `[Content_Types].xml` is in `config-data/` — create it if missing (see format rules above)
+3. Verify `data_schema.xml` has **no XML comments** — strip any before committing
+4. Verify `data.xml` starts with `<entities` — no blank lines before the root element
+5. Test locally: `pac data import --environment <url> --data deployments/data/{solution}/config-data`
+6. Commit all four files: `ConfigData.xml`, `data.xml`, `data_schema.xml`, `[Content_Types].xml`
 
 ### Adding a New Environment
 
@@ -324,3 +328,6 @@ pac data import `
 5. **Config data import order** is alphabetical by folder name — use numbered prefixes for dependencies
 6. **Connection IDs** can be GUID format or 32-char hex without hyphens — both are valid
 7. **Environment prefix mapping**: Use `solutionAreas[x].prefix` to match variables to their environment slugs (e.g., `acm_` variables → `acmecorp-*` environments)
+8. **`[Content_Types].xml` is required** in every `config-data/` folder — the CMT importer rejects the zip if it is missing. `pac data export` does NOT generate it; create it once and commit it permanently
+9. **No XML comments in `data_schema.xml`** — the CMT schema parser rejects them. Comments are allowed in `ConfigData.xml` for documentation but must be stripped in `data_schema.xml`
+10. **`data.xml` must not start with a blank line or CRLF** — the CMT parser requires the first character to be `<`. This is the most common hand-crafting mistake and produces a misleading "invalid zip" error
