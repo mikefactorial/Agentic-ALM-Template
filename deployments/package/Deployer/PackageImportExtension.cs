@@ -179,7 +179,16 @@ namespace PlatformPackage
 
             // Apply Environment Settings
             PackageLog.Log("Applying Environment Settings");
-            EnvironmentSettingService.UpdateOrganizationSettings(EnvironmentSettings);
+            var envSettings = EnvironmentSettings;
+            if (envSettings.Count > 0)
+            {
+                PackageLog.Log($"Organization settings to apply: {string.Join(", ", envSettings.Select(kvp => $"{kvp.Key}={kvp.Value}"))}");
+            }
+            else
+            {
+                PackageLog.Log("No organization settings found to apply.");
+            }
+            EnvironmentSettingService.UpdateOrganizationSettings(envSettings);
         }
 
         /// <summary>
@@ -451,7 +460,7 @@ namespace PlatformPackage
                                 continue;
                             }
 
-                            PackageLog.Log($"Updating managed identity '{config.Name}' in solution '{solution.UniqueName}' at path: {solution.ZipPath}");
+                            PackageLog.Log($"Updating managed identity '{config.Name}' in solution '{solution.UniqueName}' (applicationId: {config.ApplicationId}, tenantId: {config.TenantId}) at path: {solution.ZipPath}");
 
                             // Update the managed identity in the solution using the service
                             ManagedIdentityService.UpdateManagedIdentity(solution.ZipPath, config.Name, config.ApplicationId, config.TenantId);
@@ -667,10 +676,14 @@ namespace PlatformPackage
             }
 
             var runtimeSettingMappings = this.RuntimeSettings
-                .Where(s => s.Key.StartsWith($"{prefix}:"))
+                .Where(s => s.Key.StartsWith($"{prefix}_"))
                 .ToDictionary(kvp => kvp.Key.Remove(0, prefix.Length + 1).ToLower(), kvp => kvp.Value.ToString());
 
-            this.PackageLog.Log($"{mappings.Count} matching settings found in runtime settings");
+            this.PackageLog.Log($"{runtimeSettingMappings.Count} matching settings found in runtime settings");
+            if (runtimeSettingMappings.Count > 0)
+            {
+                this.PackageLog.Log($"Runtime setting keys found: {string.Join(", ", runtimeSettingMappings.Keys)}");
+            }
 
             foreach (var runtimeSettingsMapping in runtimeSettingMappings)
             {
