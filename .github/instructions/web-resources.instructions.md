@@ -86,12 +86,97 @@ Each web resource is mapped into the solution package via `map.xml` in the solut
 ```xml
 <FileToPath
   map="WebResources\{prefix}_\scripts\{Name}.js"
-  to="..\..\..\webresources\{solutionAreaFolder}\WR-{Name}\dist" />
+  to="..\..\..\..\..\webresources\{solutionAreaFolder}\WR-{Name}\dist" />
 ```
 
-- `map` — path SolutionPackager expects inside the solution source (use `\` separators)
-- `to` — relative to `src/solutions/{mainSolution}/src/` (three `..` levels up reaches `src/`)
+### Why five `..` levels?
+
+`dotnet build` recreates the solution's `src/` tree inside `obj\Metadata\` and runs the packager from there. The `to` path is resolved **relative to `obj\Metadata\WebResources\`** — not relative to the `.cdsproj` or `map.xml` file itself:
+
+```
+obj\Metadata\WebResources\   ← packager working directory
+  ..  (1) → obj\Metadata\
+  ..  (2) → obj\
+  ..  (3) → src\solutions\{solutionName}\
+  ..  (4) → src\solutions\
+  ..  (5) → src\
+           → webresources\{solutionAreaFolder}\WR-{Name}\dist
+```
+
+- `map` — path SolutionPackager expects inside the solution source (use `\` separators; matches the web resource logical name folder structure)
 - If `map.xml` already exists, add a new `<FileToPath>` entry; never create a second `SolutionPackagerSwitches` property in the `.cdsproj`
+
+### Which .cdsproj files need the map.xml reference?
+
+Any solution that is built with `dotnet build` and needs to include the web resource must reference `map.xml` via `SolutionPackagerSwitches`. This includes **both**:
+
+- The **feature solution** `.cdsproj` — used for inner-loop `dotnet build` + `pac solution import` to dev
+- The **main solution** `.cdsproj` — used for outer-loop CI builds
+
+If only the main solution has the reference, `dotnet build` on the feature solution will not find the compiled JS and the import will be missing the web resource.
+
+## First-Time Metadata Registration
+
+A web resource has two parts that must both exist in the solution source before Dataverse knows about it:
+
+| Part | Handled by |
+|------|------------|
+| Compiled JS content | `map.xml` → copies `dist/{Name}.js` at pack time |
+| Metadata declaration | `<WebResource>` entry in `customizations.xml` |
+
+`map.xml` handles the content automatically at build time. The metadata must be added manually to `src/solutions/{mainSolution}/src/customizations.xml` inside the `<WebResources>` element:
+
+```xml
+<WebResource>
+  <WebResourceId>{new-guid}</WebResourceId>
+  <Name>{prefix}_/scripts/{Name}.js</Name>
+  <DisplayName>{Name}</DisplayName>
+  <Description/>
+  <WebResourceType>3</WebResourceType>
+  <IntroducedVersion>1.0.0.0</IntroducedVersion>
+  <IsEnabledForMobileClient>0</IsEnabledForMobileClient>
+  <IsAvailableForMobileOffline>0</IsAvailableForMobileOffline>
+  <DependencyXml/>
+  <IsCustomizable>
+    <Value>1</Value>
+    <CanBeChanged>1</CanBeChanged>
+    <ManagedPropertyLogicalName>iscustomizable</ManagedPropertyLogicalName>
+  </IsCustomizable>
+  <CanBeDeleted>
+    <Value>1</Value>
+    <CanBeChanged>1</CanBeChanged>
+    <ManagedPropertyLogicalName>canbedeleted</ManagedPropertyLogicalName>
+  </CanBeDeleted>
+  <IsHidden>
+    <Value>0</Value>
+    <CanBeChanged>1</CanBeChanged>
+    <ManagedPropertyLogicalName>ishidden</ManagedPropertyLogicalName>
+  </IsHidden>
+  <IsManaged>0</IsManaged>
+</WebResource>
+```
+
+- `{new-guid}` — generate a fresh GUID (e.g. `[System.Guid]::NewGuid()` in PowerShell)
+- `WebResourceType` `3` = JavaScript
+- `Name` must follow the logical name convention exactly: `{prefix}_/scripts/{Name}.js`
+
+### Correct First-Time Workflow
+
+```
+1. Add <WebResource> entry to customizations.xml (above)
+2. npm run build              ← compiles TypeScript → dist/{Name}.js
+3. dotnet build               ← run from src/solutions/{featureSolutionName}/
+                                 map.xml copies dist/{Name}.js into the solution ZIP
+                                 output: obj/Debug/{featureSolutionName}.zip
+4. pac solution import --path obj/Debug/{featureSolutionName}.zip \
+     --environment {devEnvironmentUrl}   ← WR now exists in Dataverse (unmanaged)
+5. Register the form event in the form designer (OnLoad → {Name}.onLoad)
+6. pac solution sync to pull form customizations.xml changes back to source
+```
+
+> Do **not** create the web resource manually via make.powerapps.com first. Adding it directly to `customizations.xml` and deploying via the solution keeps the workflow code-first and avoids a portal round-trip.
+>
+> Do **not** create the solution ZIP manually. `dotnet build` handles packaging — the `map.xml` instructs it where to find the compiled JS. Never manually zip solution folders or call SolutionPackager directly.
 
 ## environment-config.json Reference
 
@@ -107,6 +192,6 @@ Each web resource is mapped into the solution package via `map.xml` in the solut
 1. **IIFE output only** — never switch to ES module format (`esm`, `es`). Dataverse calls exported functions as globals (`window.{Name}.onLoad`); ES modules break this entirely.
 2. **No content hashing** — filenames must be stable across builds. `fileName: () => '{Name}.js'` must return a literal string, not use the default Vite hash pattern.
 3. **Function name in Dataverse must match the namespace name exactly** — the value registered in the form designer (e.g. `AccountForm.onLoad`) must match the exported namespace and function name in `src/main.ts`.
-4. **Web resource metadata must exist in solution source** — after creating the web resource in Dataverse and adding it to your feature solution, run `pac solution sync` to pull the `customizations.xml` entry into `src/`. The `map.xml` only maps the compiled file, not the metadata.
+4. **Add web resource metadata to `customizations.xml` directly** — do not create the web resource in make.powerapps.com first. Add the `<WebResource>` entry to the solution source, build and import the solution, then register the form event. See the First-Time Metadata Registration section for the XML template and workflow.
 5. **`webResourcePreBuildPaths` must be updated** — CI will not build the web resource during outer-loop packaging unless the path is listed in `environment-config.json`.
 6. **Do not commit `dist/`** — compiled output is generated during build and should be in `.gitignore`. The `map.xml` reference handles packaging at build time.
