@@ -24,21 +24,6 @@ Additional solution folders will appear here for multi-solution repos. Each cont
 
 Some controls use `file:` references in `package.json` to depend on other controls in the same repo. When modifying a control that others depend on, check for downstream impacts and install dependencies in the correct order (base controls first, then dependents).
 
-## Build
-
-```powershell
-# Build all controls
-.github/workflows/scripts/Build-Controls.ps1 -artifactsPath ./out -skipTests
-
-# Build specific control
-.github/workflows/scripts/Build-Controls.ps1 -projectPaths "src/controls/{solutionPrefix}_{solutionName}/PCF-{ControlName}/{prefix}_{ControlName}.pcfproj" -skipTests
-
-# Filter by name pattern
-.github/workflows/scripts/Build-Controls.ps1 -projectFilter "ResultGrid"
-```
-
-Parameters: `-artifactsPath`, `-testResultsPath`, `-skipTests`, `-projectPaths`, `-projectFilter`
-
 ## Test
 
 Controls with Jest use this pattern (`jest.config.js`):
@@ -51,41 +36,6 @@ module.exports = {
   transform: { '^.+\\.[t|j]sx?$': 'babel-jest' },
   setupFilesAfterEnv: ['./jest.setup.js'],
 }
-```
-
-Run tests during build by omitting `-skipTests`, or run manually:
-
-```bash
-cd src/controls/{solutionPrefix}_{solutionName}/PCF-{ControlName}
-npm test
-```
-
-## Inner Loop (Local Development)
-
-```
-1. Edit TypeScript/React code in src/
-2. npm run build (or npx pcf-scripts build)
-3. pac pcf push --publisher-prefix {solutionPrefix}  (push to connected environment; read from solutionAreas[].prefix in environment-config.json)
-4. Test in browser (model-driven app or canvas app)
-5. Iterate
-```
-
-## Adding a New PCF Control
-
-```powershell
-# 1. Create control scaffold
-cd src/controls/<solution>/
-pac pcf init --namespace <prefix> --name <ControlName> --template field  # or dataset
-
-# 2. Install dependencies
-npm install
-
-# 3. Wire into solution .cdsproj (one-time)
-cd src/solutions/<solution>/
-pac solution add-reference --path ../../controls/<solution>/<ControlFolder>/<name>.pcfproj
-
-# 4. IMPORTANT: Manually add control to preferred solution in Dataverse
-#    PCF controls are NOT auto-tracked by preferred solution
 ```
 
 ## ControlManifest.Input.xml
@@ -129,7 +79,7 @@ Externals prevent React and FluentUI from being bundled (provided by the platfor
 
 ## Critical Rules
 
-1. **PCF controls are NOT auto-tracked** — You must manually add them to your preferred solution in Dataverse
+1. **PCF controls are NOT auto-tracked** — `pac pcf push` uses a temporary solution to import the PCF control so the PCF doesn't land in the preferred solution. You must build the feature solution and deploy it to the environment.
 2. **`pac solution add-reference`** must be run once to wire the `.pcfproj` into the solution's `.cdsproj`
 3. **Managed-layer controls** (those existing only in managed layer on dev org) cannot be synced via `pac solution sync` — bundles must be extracted from a managed export
 4. **Namespace must match solution prefix**: use `solutionAreas[x].prefix` from `environment-config.json`
